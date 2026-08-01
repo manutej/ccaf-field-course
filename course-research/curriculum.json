@@ -1,0 +1,1743 @@
+{
+  "exam": {
+    "name": "Claude Certified Architect \u2013 Foundations",
+    "code": "CCAR-F",
+    "items": 60,
+    "duration_min": 120,
+    "cost_usd": 125,
+    "passing_scaled": 720,
+    "scale": "100-1000",
+    "validity_months": 12,
+    "delivery": "Proctored: online proctored and/or test center, per program policy",
+    "effective_date": "July 2026 (Version 1.0; guide is subject to change without notice)",
+    "audience": "The ideal candidate for this certification is a solution architect who designs and implements production applications with Claude, typically with 6+ months of practical experience building with Claude APIs, Agent SDK, Claude Code, and MCP.",
+    "scoring_model": "Criterion-referenced assessment; scaled scoring (100-1,000, cut score 720) to equate difficulty across exam forms; pass/fail plus percent-correct by content domain on the score report (domain percentages are informational only, not used to determine pass/fail).",
+    "item_format": "Multiple-choice and multiple-response items; each item states how many responses to select",
+    "exam_structure": "4 scenarios drawn from a bank of 6",
+    "retake_policy": "Waiting periods increase with each failed attempt: 14 days after the first, 30 days after the second, 90 days after the third; up to 4 attempts per exam in a rolling 12-month period; fee applies to each attempt.",
+    "document_version_history": [
+      {
+        "version": "1.0",
+        "summary": "Formatting and layout updates",
+        "date": "July 2026"
+      },
+      {
+        "version": "0.2",
+        "summary": "Draft revision",
+        "date": "June 2026"
+      },
+      {
+        "version": "0.1",
+        "summary": "Initial draft",
+        "date": "February 2026"
+      }
+    ],
+    "delivery_notes": "The exam is delivered by Pearson VUE. Options: online proctoring or a Pearson test center.",
+    "audience_verbatim": false,
+    "scoring_model_verbatim": false,
+    "effective_date_verbatim": false,
+    "retake_policy_verbatim": false
+  },
+  "modules": [
+    {
+      "id": "D1",
+      "number": 1,
+      "name": "Agentic Architecture & Orchestration",
+      "weight_pct": 27,
+      "tasks": [
+        {
+          "id": "1.1",
+          "title": "Design and implement agentic loops for autonomous task execution",
+          "knowledge": [
+            "The agentic loop lifecycle: sending requests to Claude, inspecting stop_reason (\"tool_use\" vs \"end_turn\"), executing requested tools, and returning results for the next iteration",
+            "How tool results are appended to conversation history so the model can reason about the next action",
+            "The distinction between model-driven decision-making (Claude reasons about which tool to call next based on context) and pre-configured decision trees or tool sequences"
+          ],
+          "skills": [
+            "Implementing agentic loop control flow that continues when stop_reason is \"tool_use\" and terminates when stop_reason is \"end_turn\"",
+            "Adding tool results to conversation context between iterations so the model can incorporate new information into its reasoning",
+            "Avoiding anti-patterns such as parsing natural language signals to determine loop termination, setting arbitrary iteration caps as the primary stopping mechanism, or checking for assistant text content as a completion indicator"
+          ]
+        },
+        {
+          "id": "1.2",
+          "title": "Orchestrate multi-agent systems with coordinator-subagent patterns",
+          "knowledge": [
+            "Hub-and-spoke architecture where a coordinator agent manages all inter-subagent communication, error handling, and information routing",
+            "How subagents operate with isolated context\u2014they do not inherit the coordinator's conversation history automatically",
+            "The role of the coordinator in task decomposition, delegation, result aggregation, and deciding which subagents to invoke based on query complexity",
+            "Risks of overly narrow task decomposition by the coordinator, leading to incomplete coverage of broad research topics"
+          ],
+          "skills": [
+            "Designing coordinator agents that analyze query requirements and dynamically select which subagents to invoke rather than always routing through the full pipeline",
+            "Partitioning research scope across subagents to minimize duplication (e.g., assigning distinct subtopics or source types to each agent)",
+            "Implementing iterative refinement loops where the coordinator evaluates synthesis output for gaps, re-delegates to search and analysis subagents with targeted queries, and re-invokes synthesis until coverage is sufficient",
+            "Routing all subagent communication through the coordinator for observability, consistent error handling, and controlled information flow"
+          ]
+        },
+        {
+          "id": "1.3",
+          "title": "Configure subagent invocation, context passing, and spawning",
+          "knowledge": [
+            "The Task tool as the mechanism for spawning subagents, and the requirement that allowedTools must include \"Task\" for a coordinator to invoke subagents",
+            "That subagent context must be explicitly provided in the prompt\u2014subagents do not automatically inherit parent context or share memory between invocations",
+            "The AgentDefinition configuration including descriptions, system prompts, and tool restrictions for each subagent type",
+            "Fork-based session management for exploring divergent approaches from a shared analysis baseline"
+          ],
+          "skills": [
+            "Including complete findings from prior agents directly in the subagent's prompt (e.g., passing web search results and document analysis outputs to the synthesis subagent)",
+            "Using structured data formats to separate content from metadata (source URLs, document names, page numbers) when passing context between agents to preserve attribution",
+            "Spawning parallel subagents by emitting multiple Task tool calls in a single coordinator response rather than across separate turns",
+            "Designing coordinator prompts that specify research goals and quality criteria rather than step-by-step procedural instructions, to enable subagent adaptability"
+          ]
+        },
+        {
+          "id": "1.4",
+          "title": "Implement multi-step workflows with enforcement and handoff patterns",
+          "knowledge": [
+            "The difference between programmatic enforcement (hooks, prerequisite gates) and prompt-based guidance for workflow ordering",
+            "When deterministic compliance is required (e.g., identity verification before financial operations), prompt instructions alone have a non-zero failure rate",
+            "Structured handoff protocols for mid-process escalation that include customer details, root cause analysis, and recommended actions"
+          ],
+          "skills": [
+            "Implementing programmatic prerequisites that block downstream tool calls until prerequisite steps have completed (e.g., blocking process_refund until get_customer has returned a verified customer ID)",
+            "Decomposing multi-concern customer requests into distinct items, then investigating each in parallel using shared context before synthesizing a unified resolution",
+            "Compiling structured handoff summaries (customer ID, root cause, refund amount, recommended action) when escalating to human agents who lack access to the conversation transcript"
+          ]
+        },
+        {
+          "id": "1.5",
+          "title": "Apply Agent SDK hooks for tool call interception and data normalization",
+          "knowledge": [
+            "Hook patterns (e.g., PostToolUse) that intercept tool results for transformation before the model processes them",
+            "Hook patterns that intercept outgoing tool calls to enforce compliance rules (e.g., blocking refunds above a threshold)",
+            "The distinction between using hooks for deterministic guarantees versus relying on prompt instructions for probabilistic compliance"
+          ],
+          "skills": [
+            "Implementing PostToolUse hooks to normalize heterogeneous data formats (Unix timestamps, ISO 8601, numeric status codes) from different MCP tools before the agent processes them",
+            "Implementing tool call interception hooks that block policy-violating actions (e.g., refunds exceeding $500) and redirect to alternative workflows (e.g., human escalation)",
+            "Choosing hooks over prompt-based enforcement when business rules require guaranteed compliance"
+          ]
+        },
+        {
+          "id": "1.6",
+          "title": "Design task decomposition strategies for complex workflows",
+          "knowledge": [
+            "When to use fixed sequential pipelines (prompt chaining) versus dynamic adaptive decomposition based on intermediate findings",
+            "Prompt chaining patterns that break reviews into sequential steps (e.g., analyze each file individually, then run a cross-file integration pass)",
+            "The value of adaptive investigation plans that generate subtasks based on what is discovered at each step"
+          ],
+          "skills": [
+            "Selecting task decomposition patterns appropriate to the workflow: prompt chaining for predictable multi-aspect reviews, dynamic decomposition for open-ended investigation tasks",
+            "Splitting large code reviews into per-file local analysis passes plus a separate cross-file integration pass to avoid attention dilution",
+            "Decomposing open-ended tasks (e.g., \"add comprehensive tests to a legacy codebase\") by first mapping structure, identifying high-impact areas, then creating a prioritized plan that adapts as dependencies are discovered"
+          ]
+        },
+        {
+          "id": "1.7",
+          "title": "Manage session state, resumption, and forking",
+          "knowledge": [
+            "Named session resumption using --resume <session-name> to continue a specific prior conversation",
+            "fork_session for creating independent branches from a shared analysis baseline to explore divergent approaches",
+            "The importance of informing the agent about changes to previously analyzed files when resuming sessions after code modifications",
+            "Why starting a new session with a structured summary is more reliable than resuming with stale tool results"
+          ],
+          "skills": [
+            "Using --resume with session names to continue named investigation sessions across work sessions",
+            "Using fork_session to create parallel exploration branches (e.g., comparing two testing strategies or refactoring approaches from a shared codebase analysis)",
+            "Choosing between session resumption (when prior context is mostly valid) and starting fresh with injected summaries (when prior tool results are stale)",
+            "Informing a resumed session about specific file changes for targeted re-analysis rather than requiring full re-exploration"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D2",
+      "number": 2,
+      "name": "Tool Design & MCP Integration",
+      "weight_pct": 18,
+      "tasks": [
+        {
+          "id": "2.1",
+          "title": "Design effective tool interfaces with clear descriptions and boundaries",
+          "knowledge": [
+            "Tool descriptions as the primary mechanism LLMs use for tool selection; minimal descriptions lead to unreliable selection among similar tools",
+            "The importance of including input formats, example queries, edge cases, and boundary explanations in tool descriptions",
+            "How ambiguous or overlapping tool descriptions cause misrouting (e.g., analyze_content vs analyze_document with near-identical descriptions)",
+            "The impact of system prompt wording on tool selection: keyword-sensitive instructions can create unintended tool associations"
+          ],
+          "skills": [
+            "Writing tool descriptions that clearly differentiate each tool's purpose, expected inputs, outputs, and when to use it versus similar alternatives",
+            "Renaming tools and updating descriptions to eliminate functional overlap (e.g., renaming analyze_content to extract_web_results with a web-specific description)",
+            "Splitting generic tools into purpose-specific tools with defined input/output contracts (e.g., splitting a generic analyze_document into extract_data_points, summarize_content, and verify_claim_against_source)",
+            "Reviewing system prompts for keyword-sensitive instructions that might override well-written tool descriptions"
+          ]
+        },
+        {
+          "id": "2.2",
+          "title": "Implement structured error responses for MCP tools",
+          "knowledge": [
+            "The MCP isError flag pattern for communicating tool failures back to the agent",
+            "The distinction between transient errors (timeouts, service unavailability), validation errors (invalid input), business errors (policy violations), and permission errors",
+            "Why uniform error responses (generic \"Operation failed\") prevent the agent from making appropriate recovery decisions",
+            "The difference between retryable and non-retryable errors, and how returning structured metadata prevents wasted retry attempts"
+          ],
+          "skills": [
+            "Returning structured error metadata including errorCategory (transient/validation/permission), isRetryable boolean, and human-readable descriptions",
+            "Including retryable: false flags and customer-friendly explanations for business rule violations so the agent can communicate appropriately",
+            "Implementing local error recovery within subagents for transient failures, propagating to the coordinator only errors that cannot be resolved locally along with partial results and what was attempted",
+            "Distinguishing between access failures (needing retry decisions) and valid empty results (representing successful queries with no matches)"
+          ]
+        },
+        {
+          "id": "2.3",
+          "title": "Distribute tools appropriately across agents and configure tool choice",
+          "knowledge": [
+            "The principle that giving an agent access to too many tools (e.g., 18 instead of 4-5) degrades tool selection reliability by increasing decision complexity",
+            "Why agents with tools outside their specialization tend to misuse them (e.g., a synthesis agent attempting web searches)",
+            "Scoped tool access: giving agents only the tools needed for their role, with limited cross-role tools for specific high-frequency needs",
+            "tool_choice configuration options: \"auto\", \"any\", and forced tool selection ({\"type\": \"tool\", \"name\": \"...\"})"
+          ],
+          "skills": [
+            "Restricting each subagent's tool set to those relevant to its role, preventing cross-specialization misuse",
+            "Replacing generic tools with constrained alternatives (e.g., replacing fetch_url with load_document that validates document URLs)",
+            "Providing scoped cross-role tools for high-frequency needs (e.g., a verify_fact tool for the synthesis agent) while routing complex cases through the coordinator",
+            "Using tool_choice forced selection to ensure a specific tool is called first (e.g., forcing extract_metadata before enrichment tools), then processing subsequent steps in follow-up turns",
+            "Setting tool_choice: \"any\" to guarantee the model calls a tool rather than returning conversational text"
+          ]
+        },
+        {
+          "id": "2.4",
+          "title": "Integrate MCP servers into Claude Code and agent workflows",
+          "knowledge": [
+            "MCP server scoping: project-level (.mcp.json) for shared team tooling vs user-level (~/.claude.json) for personal/experimental servers",
+            "Environment variable expansion in .mcp.json (e.g., ${GITHUB_TOKEN}) for credential management without committing secrets",
+            "That tools from all configured MCP servers are discovered at connection time and available simultaneously to the agent",
+            "MCP resources as a mechanism for exposing content catalogs (e.g., issue summaries, documentation hierarchies, database schemas) to reduce exploratory tool calls"
+          ],
+          "skills": [
+            "Configuring shared MCP servers in project-scoped .mcp.json with environment variable expansion for authentication tokens",
+            "Configuring personal/experimental MCP servers in user-scoped ~/.claude.json",
+            "Enhancing MCP tool descriptions to explain capabilities and outputs in detail, preventing the agent from preferring built-in tools (like Grep) over more capable MCP tools",
+            "Choosing existing community MCP servers over custom implementations for standard integrations (e.g., Jira), reserving custom servers for team-specific workflows",
+            "Exposing content catalogs as MCP resources to give agents visibility into available data without requiring exploratory tool calls"
+          ]
+        },
+        {
+          "id": "2.5",
+          "title": "Select and apply built-in tools (Read, Write, Edit, Bash, Grep, Glob) effectively",
+          "knowledge": [
+            "Grep for content search (searching file contents for patterns like function names, error messages, or import statements)",
+            "Glob for file path pattern matching (finding files by name or extension patterns)",
+            "Read/Write for full file operations; Edit for targeted modifications using unique text matching",
+            "When Edit fails due to non-unique text matches, using Read + Write as a fallback for reliable file modifications"
+          ],
+          "skills": [
+            "Selecting Grep for searching code content across a codebase (e.g., finding all callers of a function, locating error messages)",
+            "Selecting Glob for finding files matching naming patterns (e.g., **/*.test.tsx)",
+            "Using Read to load full file contents followed by Write when Edit cannot find unique anchor text",
+            "Building codebase understanding incrementally: starting with Grep to find entry points, then using Read to follow imports and trace flows, rather than reading all files upfront",
+            "Tracing function usage across wrapper modules by first identifying all exported names, then searching for each name across the codebase"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D3",
+      "number": 3,
+      "name": "Claude Code Configuration & Workflows",
+      "weight_pct": 20,
+      "tasks": [
+        {
+          "id": "3.1",
+          "title": "Configure CLAUDE.md files with appropriate hierarchy, scoping, and modular organization",
+          "knowledge": [
+            "The CLAUDE.md configuration hierarchy: user-level (~/.claude/CLAUDE.md), project-level (.claude/CLAUDE.md or root CLAUDE.md), and directory-level (subdirectory CLAUDE.md files)",
+            "That user-level settings apply only to that user\u2014instructions in ~/.claude/CLAUDE.md are not shared with teammates via version control",
+            "The @import syntax for referencing external files to keep CLAUDE.md modular (e.g., importing specific standards files relevant to each package)",
+            ".claude/rules/ directory for organizing topic-specific rule files as an alternative to a monolithic CLAUDE.md"
+          ],
+          "skills": [
+            "Diagnosing configuration hierarchy issues (e.g., a new team member not receiving instructions because they're in user-level rather than project-level configuration)",
+            "Using @import to selectively include relevant standards files in each package's CLAUDE.md based on maintainer domain knowledge",
+            "Splitting large CLAUDE.md files into focused topic-specific files in .claude/rules/ (e.g., testing.md, api-conventions.md, deployment.md)",
+            "Using the /memory command to verify which memory files are loaded and diagnose inconsistent behavior across sessions"
+          ]
+        },
+        {
+          "id": "3.2",
+          "title": "Create and configure custom slash commands and skills",
+          "knowledge": [
+            "Project-scoped commands in .claude/commands/ (shared via version control) vs user-scoped commands in ~/.claude/commands/ (personal)",
+            "Skills in .claude/skills/ with SKILL.md files that support frontmatter configuration including context: fork, allowed-tools, and argument-hint",
+            "The context: fork frontmatter option for running skills in an isolated sub-agent context, preventing skill outputs from polluting the main conversation",
+            "Personal skill customization: creating personal variants in ~/.claude/skills/ with different names to avoid affecting teammates"
+          ],
+          "skills": [
+            "Creating project-scoped slash commands in .claude/commands/ for team-wide availability via version control",
+            "Using context: fork to isolate skills that produce verbose output (e.g., codebase analysis) or exploratory context (e.g., brainstorming alternatives) from the main session",
+            "Configuring allowed-tools in skill frontmatter to restrict tool access during skill execution (e.g., limiting to file write operations to prevent destructive actions)",
+            "Using argument-hint frontmatter to prompt developers for required parameters when they invoke the skill without arguments",
+            "Choosing between skills (on-demand invocation for task-specific workflows) and CLAUDE.md (always-loaded universal standards)"
+          ]
+        },
+        {
+          "id": "3.3",
+          "title": "Apply path-specific rules for conditional convention loading",
+          "knowledge": [
+            ".claude/rules/ files with YAML frontmatter paths fields containing glob patterns for conditional rule activation",
+            "How path-scoped rules load only when editing matching files, reducing irrelevant context and token usage",
+            "The advantage of glob-pattern rules over directory-level CLAUDE.md files for conventions that span multiple directories (e.g., test files spread throughout a codebase)"
+          ],
+          "skills": [
+            "Creating .claude/rules/ files with YAML frontmatter path scoping (e.g., paths: [\"terraform/**/*\"]) so rules load only when editing matching files",
+            "Using glob patterns in path-specific rules to apply conventions to files by type regardless of directory location (e.g., **/*.test.tsx for all test files)",
+            "Choosing path-specific rules over subdirectory CLAUDE.md files when conventions must apply to files spread across the codebase"
+          ]
+        },
+        {
+          "id": "3.4",
+          "title": "Determine when to use plan mode vs direct execution",
+          "knowledge": [
+            "Plan mode is designed for complex tasks involving large-scale changes, multiple valid approaches, architectural decisions, and multi-file modifications",
+            "Direct execution is appropriate for simple, well-scoped changes (e.g., adding a single validation check to one function)",
+            "Plan mode enables safe codebase exploration and design before committing to changes, preventing costly rework",
+            "The Explore subagent for isolating verbose discovery output and returning summaries to preserve main conversation context"
+          ],
+          "skills": [
+            "Selecting plan mode for tasks with architectural implications (e.g., microservice restructuring, library migrations affecting 45+ files, choosing between integration approaches with different infrastructure requirements)",
+            "Selecting direct execution for well-understood changes with clear scope (e.g., a single-file bug fix with a clear stack trace, adding a date validation conditional)",
+            "Using the Explore subagent for verbose discovery phases to prevent context window exhaustion during multi-phase tasks",
+            "Combining plan mode for investigation with direct execution for implementation (e.g., planning a library migration, then executing the planned approach)"
+          ]
+        },
+        {
+          "id": "3.5",
+          "title": "Apply iterative refinement techniques for progressive improvement",
+          "knowledge": [
+            "Concrete input/output examples as the most effective way to communicate expected transformations when prose descriptions are interpreted inconsistently",
+            "Test-driven iteration: writing test suites first, then iterating by sharing test failures to guide progressive improvement",
+            "The interview pattern: having Claude ask questions to surface considerations the developer may not have anticipated before implementing",
+            "When to provide all issues in a single message (interacting problems) versus fixing them sequentially (independent problems)"
+          ],
+          "skills": [
+            "Providing 2-3 concrete input/output examples to clarify transformation requirements when natural language descriptions produce inconsistent results",
+            "Writing test suites covering expected behavior, edge cases, and performance requirements before implementation, then iterating by sharing test failures",
+            "Using the interview pattern to surface design considerations (e.g., cache invalidation strategies, failure modes) before implementing solutions in unfamiliar domains",
+            "Providing specific test cases with example input and expected output to fix edge case handling (e.g., null values in migration scripts)",
+            "Addressing multiple interacting issues in a single detailed message when fixes interact, versus sequential iteration for independent issues"
+          ]
+        },
+        {
+          "id": "3.6",
+          "title": "Integrate Claude Code into CI/CD pipelines",
+          "knowledge": [
+            "The -p (or --print) flag for running Claude Code in non-interactive mode in automated pipelines",
+            "--output-format json and --json-schema CLI flags for enforcing structured output in CI contexts",
+            "CLAUDE.md as the mechanism for providing project context (testing standards, fixture conventions, review criteria) to CI-invoked Claude Code",
+            "Session context isolation: why the same Claude session that generated code is less effective at reviewing its own changes compared to an independent review instance"
+          ],
+          "skills": [
+            "Running Claude Code in CI with the -p flag to prevent interactive input hangs",
+            "Using --output-format json with --json-schema to produce machine-parseable structured findings for automated posting as inline PR comments",
+            "Including prior review findings in context when re-running reviews after new commits, instructing Claude to report only new or still-unaddressed issues to avoid duplicate comments",
+            "Providing existing test files in context so test generation avoids suggesting duplicate scenarios already covered by the test suite",
+            "Documenting testing standards, valuable test criteria, and available fixtures in CLAUDE.md to improve test generation quality and reduce low-value test output"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D4",
+      "number": 4,
+      "name": "Prompt Engineering & Structured Output",
+      "weight_pct": 20,
+      "tasks": [
+        {
+          "id": "4.1",
+          "title": "Design prompts with explicit criteria to improve precision and reduce false positives",
+          "knowledge": [
+            "The importance of explicit criteria over vague instructions (e.g., \"flag comments only when claimed behavior contradicts actual code behavior\" vs \"check that comments are accurate\")",
+            "How general instructions like \"be conservative\" or \"only report high-confidence findings\" fail to improve precision compared to specific categorical criteria",
+            "The impact of false positive rates on developer trust: high false positive categories undermine confidence in accurate categories"
+          ],
+          "skills": [
+            "Writing specific review criteria that define which issues to report (bugs, security) versus skip (minor style, local patterns) rather than relying on confidence-based filtering",
+            "Temporarily disabling high false-positive categories to restore developer trust while improving prompts for those categories",
+            "Defining explicit severity criteria with concrete code examples for each severity level to achieve consistent classification"
+          ]
+        },
+        {
+          "id": "4.2",
+          "title": "Apply few-shot prompting to improve output consistency and quality",
+          "knowledge": [
+            "Few-shot examples as the most effective technique for achieving consistently formatted, actionable output when detailed instructions alone produce inconsistent results",
+            "The role of few-shot examples in demonstrating ambiguous-case handling (e.g., tool selection for ambiguous requests, branch-level test coverage gaps)",
+            "How few-shot examples enable the model to generalize judgment to novel patterns rather than matching only pre-specified cases",
+            "The effectiveness of few-shot examples for reducing hallucination in extraction tasks (e.g., handling informal measurements, varied document structures)"
+          ],
+          "skills": [
+            "Creating 2-4 targeted few-shot examples for ambiguous scenarios that show reasoning for why one action was chosen over plausible alternatives",
+            "Including few-shot examples that demonstrate specific desired output format (location, issue, severity, suggested fix) to achieve consistency",
+            "Providing few-shot examples distinguishing acceptable code patterns from genuine issues to reduce false positives while enabling generalization",
+            "Using few-shot examples to demonstrate correct handling of varied document structures (inline citations vs bibliographies, methodology sections vs embedded details)",
+            "Adding few-shot examples showing correct extraction from documents with varied formats to address empty/null extraction of required fields"
+          ]
+        },
+        {
+          "id": "4.3",
+          "title": "Enforce structured output using tool use and JSON schemas",
+          "knowledge": [
+            "Tool use (tool_use) with JSON schemas as the most reliable approach for guaranteed schema-compliant structured output, eliminating JSON syntax errors",
+            "The distinction between tool_choice: \"auto\" (model may return text instead of calling a tool), \"any\" (model must call a tool but can choose which), and forced tool selection (model must call a specific named tool)",
+            "That strict JSON schemas via tool use eliminate syntax errors but do not prevent semantic errors (e.g., line items that don't sum to total, values in wrong fields)",
+            "Schema design considerations: required vs optional fields, enum fields with \"other\" + detail string patterns for extensible categories"
+          ],
+          "skills": [
+            "Defining extraction tools with JSON schemas as input parameters and extracting structured data from the tool_use response",
+            "Setting tool_choice: \"any\" to guarantee structured output when multiple extraction schemas exist and the document type is unknown",
+            "Forcing a specific tool with tool_choice: {\"type\": \"tool\", \"name\": \"extract_metadata\"} to ensure a particular extraction runs before enrichment steps",
+            "Designing schema fields as optional (nullable) when source documents may not contain the information, preventing the model from fabricating values to satisfy required fields",
+            "Adding enum values like \"unclear\" for ambiguous cases and \"other\" + detail fields for extensible categorization",
+            "Including format normalization rules in prompts alongside strict output schemas to handle inconsistent source formatting"
+          ]
+        },
+        {
+          "id": "4.4",
+          "title": "Implement validation, retry, and feedback loops for extraction quality",
+          "knowledge": [
+            "Retry-with-error-feedback: appending specific validation errors to the prompt on retry to guide the model toward correction",
+            "The limits of retry: retries are ineffective when the required information is simply absent from the source document (vs format or structural errors)",
+            "Feedback loop design: tracking which code constructs trigger findings (detected_pattern field) to enable systematic analysis of dismissal patterns",
+            "The difference between semantic validation errors (values don't sum, wrong field placement) and schema syntax errors (eliminated by tool use)"
+          ],
+          "skills": [
+            "Implementing follow-up requests that include the original document, the failed extraction, and specific validation errors for model self-correction",
+            "Identifying when retries will be ineffective (e.g., information exists only in an external document not provided) versus when they will succeed (format mismatches, structural output errors)",
+            "Adding detected_pattern fields to structured findings to enable analysis of false positive patterns when developers dismiss findings",
+            "Designing self-correction validation flows: extracting \"calculated_total\" alongside \"stated_total\" to flag discrepancies, adding \"conflict_detected\" booleans for inconsistent source data"
+          ]
+        },
+        {
+          "id": "4.5",
+          "title": "Design efficient batch processing strategies",
+          "knowledge": [
+            "The Message Batches API: 50% cost savings, up to 24-hour processing window, no guaranteed latency SLA",
+            "Batch processing is appropriate for non-blocking, latency-tolerant workloads (overnight reports, weekly audits, nightly test generation) and inappropriate for blocking workflows (pre-merge checks)",
+            "The batch API does not support multi-turn tool calling within a single request (cannot execute tools mid-request and return results)",
+            "custom_id fields for correlating batch request/response pairs"
+          ],
+          "skills": [
+            "Matching API approach to workflow latency requirements: synchronous API for blocking pre-merge checks, batch API for overnight/weekly analysis",
+            "Calculating batch submission frequency based on SLA constraints (e.g., 4-hour windows to guarantee 30-hour SLA with 24-hour batch processing)",
+            "Handling batch failures: resubmitting only failed documents (identified by custom_id) with appropriate modifications (e.g., chunking documents that exceeded context limits)",
+            "Using prompt refinement on a sample set before batch-processing large volumes to maximize first-pass success rates and reduce iterative resubmission costs"
+          ]
+        },
+        {
+          "id": "4.6",
+          "title": "Design multi-instance and multi-pass review architectures",
+          "knowledge": [
+            "Self-review limitations: a model retains reasoning context from generation, making it less likely to question its own decisions in the same session",
+            "Independent review instances (without prior reasoning context) are more effective at catching subtle issues than self-review instructions or extended thinking",
+            "Multi-pass review: splitting large reviews into per-file local analysis passes plus cross-file integration passes to avoid attention dilution and contradictory findings"
+          ],
+          "skills": [
+            "Using a second independent Claude instance to review generated code without the generator's reasoning context",
+            "Splitting large multi-file reviews into focused per-file passes for local issues plus separate integration passes for cross-file data flow analysis",
+            "Running verification passes where the model self-reports confidence alongside each finding to enable calibrated review routing"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D5",
+      "number": 5,
+      "name": "Context Management & Reliability",
+      "weight_pct": 15,
+      "tasks": [
+        {
+          "id": "5.1",
+          "title": "Manage conversation context to preserve critical information across long interactions",
+          "knowledge": [
+            "Progressive summarization risks: condensing numerical values, percentages, dates, and customer-stated expectations into vague summaries",
+            "The \"lost in the middle\" effect: models reliably process information at the beginning and end of long inputs but may omit findings from middle sections",
+            "How tool results accumulate in context and consume tokens disproportionately to their relevance (e.g., 40+ fields per order lookup when only 5 are relevant)",
+            "The importance of passing complete conversation history in subsequent API requests to maintain conversational coherence"
+          ],
+          "skills": [
+            "Extracting transactional facts (amounts, dates, order numbers, statuses) into a persistent \"case facts\" block included in each prompt, outside summarized history",
+            "Extracting and persisting structured issue data (order IDs, amounts, statuses) into a separate context layer for multi-issue sessions",
+            "Trimming verbose tool outputs to only relevant fields before they accumulate in context (e.g., keeping only return-relevant fields from order lookups)",
+            "Placing key findings summaries at the beginning of aggregated inputs and organizing detailed results with explicit section headers to mitigate position effects",
+            "Requiring subagents to include metadata (dates, source locations, methodological context) in structured outputs to support accurate downstream synthesis",
+            "Modifying upstream agents to return structured data (key facts, citations, relevance scores) instead of verbose content and reasoning chains when downstream agents have limited context budgets"
+          ]
+        },
+        {
+          "id": "5.2",
+          "title": "Design effective escalation and ambiguity resolution patterns",
+          "knowledge": [
+            "Appropriate escalation triggers: customer requests for a human, policy exceptions/gaps (not just complex cases), and inability to make meaningful progress",
+            "The distinction between escalating immediately when a customer explicitly demands it versus offering to resolve when the issue is straightforward",
+            "Why sentiment-based escalation and self-reported confidence scores are unreliable proxies for actual case complexity",
+            "How multiple customer matches require clarification (requesting additional identifiers) rather than heuristic selection"
+          ],
+          "skills": [
+            "Adding explicit escalation criteria with few-shot examples to the system prompt demonstrating when to escalate versus resolve autonomously",
+            "Honoring explicit customer requests for human agents immediately without first attempting investigation",
+            "Acknowledging frustration while offering resolution when the issue is within the agent's capability, escalating only if the customer reiterates their preference",
+            "Escalating when policy is ambiguous or silent on the customer's specific request (e.g., competitor price matching when policy only addresses own-site adjustments)",
+            "Instructing the agent to ask for additional identifiers when tool results return multiple matches, rather than selecting based on heuristics"
+          ]
+        },
+        {
+          "id": "5.3",
+          "title": "Implement error propagation strategies across multi-agent systems",
+          "knowledge": [
+            "Structured error context (failure type, attempted query, partial results, alternative approaches) as enabling intelligent coordinator recovery decisions",
+            "The distinction between access failures (timeouts needing retry decisions) and valid empty results (successful queries with no matches)",
+            "Why generic error statuses (\"search unavailable\") hide valuable context from the coordinator",
+            "Why silently suppressing errors (returning empty results as success) or terminating entire workflows on single failures are both anti-patterns"
+          ],
+          "skills": [
+            "Returning structured error context including failure type, what was attempted, partial results, and potential alternatives to enable coordinator recovery",
+            "Distinguishing access failures from valid empty results in error reporting so the coordinator can make appropriate decisions",
+            "Having subagents implement local recovery for transient failures and only propagate errors they cannot resolve, including what was attempted and partial results",
+            "Structuring synthesis output with coverage annotations indicating which findings are well-supported versus which topic areas have gaps due to unavailable sources"
+          ]
+        },
+        {
+          "id": "5.4",
+          "title": "Manage context effectively in large codebase exploration",
+          "knowledge": [
+            "Context degradation in extended sessions: models start giving inconsistent answers and referencing \"typical patterns\" rather than specific classes discovered earlier",
+            "The role of scratchpad files for persisting key findings across context boundaries",
+            "Subagent delegation for isolating verbose exploration output while the main agent coordinates high-level understanding",
+            "Structured state persistence for crash recovery: each agent exports state to a known location, and the coordinator loads a manifest on resume"
+          ],
+          "skills": [
+            "Spawning subagents to investigate specific questions (e.g., \"find all test files,\" \"trace refund flow dependencies\") while the main agent preserves high-level coordination",
+            "Having agents maintain scratchpad files recording key findings, referencing them for subsequent questions to counteract context degradation",
+            "Summarizing key findings from one exploration phase before spawning sub-agents for the next phase, injecting summaries into initial context",
+            "Designing crash recovery using structured agent state exports (manifests) that the coordinator loads on resume and injects into agent prompts",
+            "Using /compact to reduce context usage during extended exploration sessions when context fills with verbose discovery output"
+          ]
+        },
+        {
+          "id": "5.5",
+          "title": "Design human review workflows and confidence calibration",
+          "knowledge": [
+            "The risk that aggregate accuracy metrics (e.g., 97% overall) may mask poor performance on specific document types or fields",
+            "Stratified random sampling for measuring error rates in high-confidence extractions and detecting novel error patterns",
+            "Field-level confidence scores calibrated using labeled validation sets for routing review attention",
+            "The importance of validating accuracy by document type and field segment before automating high-confidence extractions"
+          ],
+          "skills": [
+            "Implementing stratified random sampling of high-confidence extractions for ongoing error rate measurement and novel pattern detection",
+            "Analyzing accuracy by document type and field to verify consistent performance across all segments before reducing human review",
+            "Having models output field-level confidence scores, then calibrating review thresholds using labeled validation sets",
+            "Routing extractions with low model confidence or ambiguous/contradictory source documents to human review, prioritizing limited reviewer capacity"
+          ]
+        },
+        {
+          "id": "5.6",
+          "title": "Preserve information provenance and handle uncertainty in multi-source synthesis",
+          "knowledge": [
+            "How source attribution is lost during summarization steps when findings are compressed without preserving claim-source mappings",
+            "The importance of structured claim-source mappings that the synthesis agent must preserve and merge when combining findings",
+            "How to handle conflicting statistics from credible sources: annotating conflicts with source attribution rather than arbitrarily selecting one value",
+            "Temporal data: requiring publication/collection dates in structured outputs to prevent temporal differences from being misinterpreted as contradictions"
+          ],
+          "skills": [
+            "Requiring subagents to output structured claim-source mappings (source URLs, document names, relevant excerpts) that downstream agents preserve through synthesis",
+            "Structuring reports with explicit sections distinguishing well-established findings from contested ones, preserving original source characterizations and methodological context",
+            "Completing document analysis with conflicting values included and explicitly annotated, letting the coordinator decide how to reconcile before passing to synthesis",
+            "Requiring subagents to include publication or data collection dates in structured outputs to enable correct temporal interpretation",
+            "Rendering different content types appropriately in synthesis outputs \u2014 financial data as tables, news as prose, technical findings as structured lists \u2014 rather than converting everything to a uniform format"
+          ]
+        }
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "S1",
+      "name": "Customer Support Resolution Agent",
+      "primary_domains": [
+        "D1",
+        "D2",
+        "D5"
+      ],
+      "narrative": "You are building a customer support resolution agent using the Claude Agent SDK. The agent handles high-ambiguity requests like returns, billing disputes, and account issues. It has access to your backend systems through custom Model Context Protocol (MCP) tools (get_customer, lookup_order, process_refund, escalate_to_human). Your target is 80%+ first-contact resolution while knowing when to escalate.",
+      "note": "Narrative recovered verbatim from PDF p.3 by W1-patch (2026-08-01). Previously only title + primary-domain mapping were recorded. See anomalies (RESOLVED)."
+    },
+    {
+      "id": "S2",
+      "name": "Code Generation with Claude Code",
+      "primary_domains": [
+        "D3",
+        "D5"
+      ],
+      "narrative": "You are using Claude Code to accelerate software development. Your team uses it for code generation, refactoring, debugging, and documentation. You need to integrate it into your development workflow with custom slash commands, CLAUDE.md configurations, and understand when to use plan mode vs direct execution.",
+      "note": "Narrative recovered verbatim from PDF p.4 by W1-patch (2026-08-01). Previously only title + primary-domain mapping were recorded. See anomalies (RESOLVED)."
+    },
+    {
+      "id": "S3",
+      "name": "Multi-Agent Research System",
+      "primary_domains": [
+        "D1",
+        "D2",
+        "D5"
+      ],
+      "narrative": "You are building a multi-agent research system using the Claude Agent SDK. A coordinator agent delegates to specialized subagents: one searches the web, one analyzes documents, one synthesizes findings, and one generates reports. The system researches topics and produces comprehensive, cited reports.",
+      "note": "Narrative recovered verbatim from PDF p.4 by W1-patch (2026-08-01). Previously only title + primary-domain mapping were recorded. See anomalies (RESOLVED)."
+    },
+    {
+      "id": "S4",
+      "name": "Developer Productivity with Claude",
+      "primary_domains": [
+        "D2",
+        "D3",
+        "D1"
+      ],
+      "narrative": "You are building developer productivity tools using the Claude Agent SDK. The agent helps engineers explore unfamiliar codebases, understand legacy systems, generate boilerplate code, and automate repetitive tasks. It uses the built-in tools (Read, Write, Bash, Grep, Glob) and integrates with Model Context Protocol (MCP) servers.",
+      "note": "Narrative recovered verbatim from PDF p.4 by W1-patch (2026-08-01). Previously only title + primary-domain mapping were recorded. See anomalies (RESOLVED)."
+    },
+    {
+      "id": "S5",
+      "name": "Claude Code for Continuous Integration",
+      "primary_domains": [
+        "D3",
+        "D4"
+      ],
+      "narrative": "You are integrating Claude Code into your Continuous Integration/Continuous Deployment (CI/CD) pipeline. The system runs automated code reviews, generates test cases, and provides feedback on pull requests. You need to design prompts that provide actionable feedback and minimize false positives.",
+      "note": "Narrative recovered verbatim from PDF p.4 by W1-patch (2026-08-01). Previously only title + primary-domain mapping were recorded. See anomalies (RESOLVED)."
+    },
+    {
+      "id": "S6",
+      "name": "Structured Data Extraction",
+      "primary_domains": [
+        "D4",
+        "D5"
+      ],
+      "narrative": "You are building a structured data extraction system using Claude. The system extracts information from unstructured documents, validates the output using JavaScript Object Notation (JSON) schemas, and maintains high accuracy. It must handle edge cases gracefully and integrate with downstream systems.",
+      "note": "Narrative recovered verbatim from PDF p.4 by W1-patch (2026-08-01). Previously only title + primary-domain mapping were recorded. See anomalies (RESOLVED)."
+    }
+  ],
+  "high_yield_leaves": [
+    {
+      "id": "D1.T1.S1.Q1",
+      "question": "In any agentic loop, what are the steps of a single iteration from sending a request to sending the next one, and which single field decides whether the loop continues?",
+      "answer_slot": [
+        "lists send request -> read stop_reason -> if tool_use execute tools -> append results -> resend",
+        "identifies stop_reason as the sole continuation signal",
+        "names the request-shaping fields the loop sets per request: max_tokens and the system prompt"
+      ],
+      "answer_type": "fact-set",
+      "source": "TS 1.1 K1 S1",
+      "difficulty": "recall",
+      "scenario_hooks": [
+        "SC1",
+        "SC3",
+        "SC4"
+      ]
+    },
+    {
+      "id": "D1.T1.S2.Q1",
+      "question": "A teammate proposes ending the loop when the assistant's text contains 'TASK COMPLETE' - what makes this an anti-pattern, and what should signal completion instead?",
+      "answer_slot": [
+        "natural-language signals are probabilistic and phrasing-dependent - the model may omit or emit them spuriously",
+        "stop_reason end_turn is the structured, reliable completion signal"
+      ],
+      "answer_type": "procedure-with-rationale",
+      "source": "TS 1.1 S3",
+      "difficulty": "application",
+      "scenario_hooks": [
+        "SC1",
+        "SC4"
+      ]
+    },
+    {
+      "id": "D1.T2.S1.Q2",
+      "question": "Why can a subagent not simply 'know' what the coordinator or a sibling learned earlier, and what does that force the coordinator to do?",
+      "answer_slot": [
+        "subagents run with isolated context - no automatic inheritance of coordinator history or sibling results",
+        "coordinator must explicitly route needed information into each subagent's prompt",
+        "forgetting this yields subagents that redo work or answer generically"
+      ],
+      "answer_type": "procedure-with-rationale",
+      "source": "TS 1.2 K2,K3",
+      "difficulty": "application",
+      "scenario_hooks": [
+        "SC3",
+        "SC1"
+      ]
+    },
+    {
+      "id": "D1.T2.S2.Q1",
+      "question": "Every subagent in a research pipeline succeeded, yet the final report covers only a narrow slice of the topic - where do you look first for the root cause and why?",
+      "answer_slot": [
+        "look at the coordinator's task decomposition - the subtasks it assigned define maximum possible coverage",
+        "subagents executing narrow assignments correctly cannot recover breadth that was never assigned",
+        "blaming search queries, analysis filters, or synthesis instructions misreads correct downstream behavior"
+      ],
+      "answer_type": "diagnosis-with-rationale",
+      "source": "TS 1.2 K4",
+      "difficulty": "analysis",
+      "scenario_hooks": [
+        "SC3"
+      ]
+    },
+    {
+      "id": "D1.T3.S1.Q1",
+      "question": "A coordinator's Task tool calls silently never spawn anything - what configuration must you check first, and what is the general rule it instantiates?",
+      "answer_slot": [
+        "check that 'Task' is included in the coordinator's allowedTools",
+        "rule: subagent spawning is itself a tool call and is gated by tool permissions like any other"
+      ],
+      "answer_type": "fact-set",
+      "source": "TS 1.3 K1",
+      "difficulty": "recall",
+      "scenario_hooks": [
+        "SC3",
+        "SC1"
+      ]
+    },
+    {
+      "id": "D1.T3.S2.Q1",
+      "question": "A synthesis subagent produces generic output that ignores the search results gathered minutes earlier - what is the most likely cause and the fix?",
+      "answer_slot": [
+        "cause: findings were never placed in its prompt - subagents do not inherit parent context or share memory between invocations",
+        "fix: include the complete prior-agent findings (search results, analysis outputs) directly in the synthesis prompt"
+      ],
+      "answer_type": "procedure-with-rationale",
+      "source": "TS 1.3 K2 S1",
+      "difficulty": "application",
+      "scenario_hooks": [
+        "SC3"
+      ]
+    },
+    {
+      "id": "D1.T4.S1.Q1",
+      "question": "An agent skips identity verification before financial operations in a small percent of cases despite a mandatory-sounding system prompt - why is more prompting (or few-shot examples) the wrong fix, and what is the right one?",
+      "answer_slot": [
+        "prompt and few-shot compliance is probabilistic; any non-zero failure rate is unacceptable when errors have financial consequences",
+        "right fix: programmatic prerequisite that blocks the downstream tools until verification returns a verified ID",
+        "distinguishes tool-ordering problems from tool-availability problems (routing classifiers solve the wrong problem)"
+      ],
+      "answer_type": "diagnosis-with-rationale",
+      "source": "TS 1.4 K1,K2 S1",
+      "difficulty": "analysis",
+      "scenario_hooks": [
+        "SC1"
+      ]
+    },
+    {
+      "id": "D1.T4.S2.Q2",
+      "question": "What must a structured handoff summary contain when escalating mid-process to a human agent, and why is each field there?",
+      "answer_slot": [
+        "customer ID (so the human can act without re-identification)",
+        "root cause analysis and refund amount / findings so far (so investigation is not repeated)",
+        "recommended action (so the human starts from a decision, not from zero)"
+      ],
+      "answer_type": "fact-set",
+      "source": "TS 1.4 K3 S3",
+      "difficulty": "recall",
+      "scenario_hooks": [
+        "SC1"
+      ]
+    },
+    {
+      "id": "D1.T5.S1.Q1",
+      "question": "Three MCP tools return timestamps as Unix epoch, ISO 8601, and locale strings, and the agent keeps mis-comparing dates - where do you normalize and why there?",
+      "answer_slot": [
+        "implement a PostToolUse hook that converts all formats to one canonical form before the model processes results",
+        "normalizing in the hook is deterministic; asking the model to convert in-prompt fails intermittently",
+        "fixing each tool server may be impossible (third-party) - the hook is your integration boundary"
+      ],
+      "answer_type": "procedure-with-rationale",
+      "source": "TS 1.5 K1 S1",
+      "difficulty": "application",
+      "scenario_hooks": [
+        "SC1",
+        "SC4"
+      ]
+    },
+    {
+      "id": "D1.T5.S2.Q1",
+      "question": "How do you make it impossible - not just unlikely - for an agent to process a refund above a policy threshold, and why can no system prompt achieve this?",
+      "answer_slot": [
+        "implement a tool-call interception hook that blocks process_refund calls exceeding the threshold",
+        "prompts yield probabilistic compliance with a non-zero violation rate - unacceptable for hard policy",
+        "the hook runs in code, outside anything the model can talk itself around"
+      ],
+      "answer_type": "procedure-with-rationale",
+      "source": "TS 1.5 K2 S2,S3",
+      "difficulty": "application",
+      "scenario_hooks": [
+        "SC1"
+      ]
+    },
+    {
+      "id": "D1.T6.S1.Q1",
+      "question": "What properties of a workflow tell you to use a fixed prompt chain versus dynamic decomposition, and what breaks when you pick wrong?",
+      "answer_slot": [
+        "fixed chain: steps known in advance and stable across instances (e.g. per-aspect review passes)",
+        "dynamic: next steps depend on intermediate findings (e.g. open-ended investigation)",
+        "wrong-fixed breaks on surprises; wrong-dynamic adds cost and nondeterminism to routine work"
+      ],
+      "answer_type": "diagnosis-with-rationale",
+      "source": "TS 1.6 K1 S1",
+      "difficulty": "analysis",
+      "scenario_hooks": [
+        "SC3",
+        "SC5"
+      ]
+    },
+    {
+      "id": "D1.T6.S2.Q1",
+      "question": "A single-pass review of a large multi-file change gives detailed feedback on some files, superficial on others, and contradicts itself - what restructuring fixes it and what is the root cause?",
+      "answer_slot": [
+        "root cause: attention dilution when analyzing many files at once",
+        "fix: per-file passes for local issues plus a separate integration pass for cross-file flow",
+        "bigger context windows do not fix attention quality; consensus voting suppresses real findings"
+      ],
+      "answer_type": "diagnosis-with-rationale",
+      "source": "TS 1.6 K2 S2",
+      "difficulty": "analysis",
+      "scenario_hooks": [
+        "SC5"
+      ]
+    },
+    {
+      "id": "D1.T7.S1.Q2",
+      "question": "After major code changes, why is starting a new session with a structured summary more reliable than resuming the old one, and what goes into the summary?",
+      "answer_slot": [
+        "resumed stale tool results describe code that no longer exists - the model reasons from fiction",
+        "fresh session + injected structured summary carries forward conclusions without stale evidence",
+        "summary holds key findings and decisions, not raw tool output"
+      ],
+      "answer_type": "diagnosis-with-rationale",
+      "source": "TS 1.7 K4 S3",
+      "difficulty": "analysis",
+      "scenario_hooks": [
+        "SC2"
+      ]
+    },
+    {
+      "id": "D1.T7.S2.Q1",
+      "question": "You want to compare two testing strategies that both depend on the same expensive codebase analysis - what mechanism do you use and why not two fresh sessions or one shared session?",
+      "answer_slot": [
+        "fork_session twice from the analysis baseline - each strategy explored in its own branch",
+        "two fresh sessions duplicate the analysis cost and may diverge in their understanding",
+        "one shared session lets the strategies contaminate each other's reasoning"
+      ],
+      "answer_type": "procedure-with-rationale",
+      "source": "TS 1.7 K2 S2",
+      "difficulty": "application",
+      "scenario_hooks": [
+        "SC2",
+        "SC4"
+      ]
+    },
+    {
+      "id": "D2.T1.S1.Q1",
+      "question": "Users ask about orders and the agent calls get_customer instead of lookup_order; both have one-line descriptions - what is the most effective first step and why is it first?",
+      "answer_slot": [
+        "expand each description: input formats handled, example queries, edge cases, boundaries versus the similar tool",
+        "descriptions are the primary mechanism LLMs use for selection - minimal ones are the root cause",
+        "first because low-effort/high-leverage: few-shot adds tokens without fixing the cause; routing layers and tool consolidation are heavier redesigns"
+      ],
+      "answer_type": "diagnosis-with-rationale",
+      "source": "TS 2.1 K1 S1",
+      "difficulty": "analysis",
+      "scenario_hooks": [
+        "SC1",
+        "SC4"
+      ]
+    },
+    {
+      "id": "D2.T1.S2.Q1",
+      "question": "analyze_content and analyze_document have near-identical descriptions and get misrouted constantly - what rename-and-describe move fixes it, and what makes a name self-disambiguating?",
+      "answer_slot": [
+        "rename to reflect the actual domain, e.g. analyze_content -> extract_web_results with a web-specific description",
+        "self-disambiguating: the name itself encodes the input domain or action so overlap disappears at a glance",
+        "name and description must agree - a good name with a generic description still misroutes"
+      ],
+      "answer_type": "procedure-with-rationale",
+      "source": "TS 2.1 K3 S2",
+      "difficulty": "application",
+      "scenario_hooks": [
+        "SC3",
+        "SC4"
+      ]
+    },
+    {
+      "id": "D2.T2.S1.Q2",
+      "question": "What does a well-structured MCP tool error response contain, and what does the isError flag itself communicate?",
+      "answer_slot": [
+        "isError flag marks the result as a failure the agent must reason about (MCP's failure-communication pattern)",
+        "errorCategory (transient/validation/permission), isRetryable boolean, human-readable description",
+        "each field maps to a distinct agent decision: what happened, whether to retry, what to say"
+      ],
+      "answer_type": "fact-set",
+      "source": "TS 2.2 K1 S1",
+      "difficulty": "recall",
+      "scenario_hooks": [
+        "SC1",
+        "SC3"
+      ]
+    },
+    {
+      "id": "D2.T2.S2.Q2",
+      "question": "A search returns nothing - how must the tool distinguish 'no matches exist' from 'could not access the source', and what wrong behavior follows from conflating them?",
+      "answer_slot": [
+        "valid empty result = successful query with zero matches; access failure = error needing a retry decision",
+        "conflation as failure triggers pointless retries of a correct answer",
+        "conflation as success silently drops recoverable data from the research"
+      ],
+      "answer_type": "procedure-with-rationale",
+      "source": "TS 2.2 S4",
+      "difficulty": "application",
+      "scenario_hooks": [
+        "SC3",
+        "SC1"
+      ]
+    },
+    {
+      "id": "D2.T3.S1.Q2",
+      "question": "A synthesis agent needs frequent simple fact-checks but full search access violates its role; round-tripping through the coordinator adds 40% latency - what design resolves this, and why not the extremes?",
+      "answer_slot": [
+        "give it a scoped verify_fact tool for the high-frequency simple case",
+        "complex verifications still delegate through the coordinator to the search agent",
+        "full search access over-provisions and violates separation of concerns; batching creates blocking dependencies; speculative caching cannot predict needs"
+      ],
+      "answer_type": "diagnosis-with-rationale",
+      "source": "TS 2.3 K3 S3",
+      "difficulty": "analysis",
+      "scenario_hooks": [
+        "SC3"
+      ]
+    },
+    {
+      "id": "D2.T3.S2.Q1",
+      "question": "Which options does tool_choice offer, and exactly what behavior does each permit or compel?",
+      "answer_slot": [
+        "auto: tool calls optional - the model may respond with plain text",
+        "any: a tool call is compulsory but the model chooses which tool",
+        "forced {type:'tool', name:'...'}: that specific tool must be called"
+      ],
+      "answer_type": "fact-set",
+      "source": "TS 2.3 K4",
+      "difficulty": "recall",
+      "scenario_hooks": [
+        "SC3",
+        "SC6"
+      ]
+    },
+    {
+      "id": "D2.T4.S1.Q1",
+      "question": "A team-shared MCP server and a personal experimental one - which config file does each belong in, and what property of each file makes it the right home?",
+      "answer_slot": [
+        "team-shared: project-scoped .mcp.json - version-controlled, so the whole team gets it",
+        "personal/experimental: user-scoped ~/.claude.json - private, no teammate impact",
+        "the scope decision is exactly the sharing decision"
+      ],
+      "answer_type": "fact-set",
+      "source": "TS 2.4 K1 S1,S2",
+      "difficulty": "recall",
+      "scenario_hooks": [
+        "SC4",
+        "SC2"
+      ]
+    },
+    {
+      "id": "D2.T4.S2.Q1",
+      "question": "The agent keeps using built-in Grep instead of your far more capable MCP search tool - why, and what is the fix?",
+      "answer_slot": [
+        "the MCP tool's description undersells it - the agent cannot know the capability advantage",
+        "enhance the description to explain capabilities and outputs in detail",
+        "selection is description-driven; built-ins win ties by familiarity"
+      ],
+      "answer_type": "procedure-with-rationale",
+      "source": "TS 2.4 S3",
+      "difficulty": "application",
+      "scenario_hooks": [
+        "SC4",
+        "SC2"
+      ]
+    },
+    {
+      "id": "D2.T5.S1.Q1",
+      "question": "What precisely is the Grep/Glob discrimination - what does each search over, and which one task is each uniquely right for?",
+      "answer_slot": [
+        "Grep: file contents - patterns like function names, error messages, import statements",
+        "Glob: file paths - names and extension patterns",
+        "find all callers of a function -> Grep; find all *.test.tsx files -> Glob"
+      ],
+      "answer_type": "fact-set",
+      "source": "TS 2.5 K1,K2 S1,S2",
+      "difficulty": "recall",
+      "scenario_hooks": [
+        "SC4",
+        "SC2"
+      ]
+    },
+    {
+      "id": "D2.T5.S2.Q1",
+      "question": "Edit keeps failing because your anchor text appears multiple times in the file - what is the reliable fallback procedure?",
+      "answer_slot": [
+        "Read the full file contents, apply the modification, then Write the complete updated file",
+        "Read+Write does not depend on anchor uniqueness",
+        "this is the documented fallback when unique anchors cannot be found"
+      ],
+      "answer_type": "fact-set",
+      "source": "TS 2.5 K4 S3",
+      "difficulty": "recall",
+      "scenario_hooks": [
+        "SC4",
+        "SC2"
+      ]
+    },
+    {
+      "id": "D3.T1.S1.Q1",
+      "question": "A new team member's Claude Code ignores conventions everyone else gets - what misplacement explains it and what is the fix?",
+      "answer_slot": [
+        "the conventions live in someone's user-level ~/.claude/CLAUDE.md, which is not shared via version control",
+        "fix: move team-wide instructions to project-level CLAUDE.md committed to the repo",
+        "general law: sharing scope is determined by which level holds the instruction"
+      ],
+      "answer_type": "procedure-with-rationale",
+      "source": "TS 3.1 K2 S1",
+      "difficulty": "application",
+      "scenario_hooks": [
+        "SC2"
+      ]
+    },
+    {
+      "id": "D3.T1.S2.Q1",
+      "question": "Your CLAUDE.md mixes testing, API, and deployment guidance and has become unmanageable - what reorganization does Claude Code support and what does each resulting file look like?",
+      "answer_slot": [
+        "split into focused topic files in .claude/rules/ (testing.md, api-conventions.md, deployment.md)",
+        "each file carries one coherent concern, independently maintainable",
+        "this replaces the monolithic CLAUDE.md pattern for large rule sets"
+      ],
+      "answer_type": "procedure-with-rationale",
+      "source": "TS 3.1 K4 S3",
+      "difficulty": "application",
+      "scenario_hooks": [
+        "SC2"
+      ]
+    },
+    {
+      "id": "D3.T2.S1.Q1",
+      "question": "A /review command must be available to every developer the moment they clone or pull the repo - where does the file go, and why do the plausible alternatives fail?",
+      "answer_slot": [
+        "create it in .claude/commands/ inside the repository - version control distributes it",
+        "~/.claude/commands/ is personal and unshared; CLAUDE.md holds instructions, not command definitions",
+        "no commands array in a config JSON exists"
+      ],
+      "answer_type": "fact-set",
+      "source": "TS 3.2 K1 S1",
+      "difficulty": "recall",
+      "scenario_hooks": [
+        "SC2"
+      ]
+    },
+    {
+      "id": "D3.T2.S2.Q1",
+      "question": "A codebase-analysis skill floods the main conversation with exploratory output - which frontmatter option fixes it, and what exactly changes at runtime?",
+      "answer_slot": [
+        "context: fork - the skill runs in an isolated sub-agent context",
+        "verbose/exploratory output stays in the fork; only results return to the main session",
+        "same option applies to brainstorming skills whose exploration should not persist"
+      ],
+      "answer_type": "procedure-with-rationale",
+      "source": "TS 3.2 K3 S2",
+      "difficulty": "application",
+      "scenario_hooks": [
+        "SC2"
+      ]
+    },
+    {
+      "id": "D3.T3.S1.Q1",
+      "question": "Write the skeleton of a path-scoped rule file for Terraform conventions - what frontmatter field and value make it conditional?",
+      "answer_slot": [
+        "a .claude/rules/ file with YAML frontmatter containing paths: [\"terraform/**/*\"]",
+        "the body holds the conventions; the paths globs are the activation condition"
+      ],
+      "answer_type": "fact-set",
+      "source": "TS 3.3 K1 S1",
+      "difficulty": "recall",
+      "scenario_hooks": [
+        "SC2"
+      ]
+    },
+    {
+      "id": "D3.T3.S2.Q1",
+      "question": "Test files sit next to the code they test all over the repo, and all tests must share conventions - which mechanism applies them automatically and why does each alternative fail?",
+      "answer_slot": [
+        ".claude/rules/ file with a glob like **/*.test.tsx - matches by path pattern regardless of directory",
+        "directory CLAUDE.md files are directory-bound and cannot follow scattered files",
+        "root-CLAUDE.md headers rely on inference; skills require invocation - neither is deterministic automatic application"
+      ],
+      "answer_type": "diagnosis-with-rationale",
+      "source": "TS 3.3 K3 S3",
+      "difficulty": "analysis",
+      "scenario_hooks": [
+        "SC2"
+      ]
+    },
+    {
+      "id": "D3.T4.S1.Q1",
+      "question": "Restructuring a monolith into microservices touches dozens of files and demands service-boundary decisions - which mode and what does it buy before any change is made?",
+      "answer_slot": [
+        "plan mode - the task has large scale, architectural decisions, and multiple valid approaches",
+        "buys safe exploration of the codebase and dependency understanding before committing",
+        "prevents costly rework from late-discovered dependencies"
+      ],
+      "answer_type": "procedure-with-rationale",
+      "source": "TS 3.4 K1 S1",
+      "difficulty": "application",
+      "scenario_hooks": [
+        "SC2"
+      ]
+    },
+    {
+      "id": "D3.T4.S1.Q2",
+      "question": "Adding a single date-validation conditional to one function - which mode, and what would the other mode cost you here?",
+      "answer_slot": [
+        "direct execution - simple, well-scoped, one file, clear change",
+        "plan mode here adds ceremony and latency with nothing to de-risk",
+        "scoping clarity, not file count alone, is the criterion"
+      ],
+      "answer_type": "procedure-with-rationale",
+      "source": "TS 3.4 K2 S2",
+      "difficulty": "application",
+      "scenario_hooks": [
+        "SC2"
+      ]
+    },
+    {
+      "id": "D3.T5.S1.Q1",
+      "question": "Your prose description of a data transformation yields different behavior each attempt - what do you add, how many, and why does it work?",
+      "answer_slot": [
+        "provide 2-3 concrete input/output examples of the expected transformation",
+        "examples pin down semantics that prose leaves ambiguous",
+        "this is the most effective communication when descriptions are interpreted inconsistently"
+      ],
+      "answer_type": "procedure-with-rationale",
+      "source": "TS 3.5 K1 S1",
+      "difficulty": "application",
+      "scenario_hooks": [
+        "SC2",
+        "SC6"
+      ]
+    },
+    {
+      "id": "D3.T5.S2.Q2",
+      "question": "You have several issues to fix - what determines whether you present them all in one detailed message or fix them one at a time?",
+      "answer_slot": [
+        "interacting problems: one message, so fixes are designed jointly and do not conflict",
+        "independent problems: sequential iteration keeps each round focused and verifiable",
+        "misbatching costs either conflicting patches or needless round-trips"
+      ],
+      "answer_type": "diagnosis-with-rationale",
+      "source": "TS 3.5 K4 S5",
+      "difficulty": "analysis",
+      "scenario_hooks": [
+        "SC2",
+        "SC5"
+      ]
+    },
+    {
+      "id": "D3.T6.S1.Q1",
+      "question": "A pipeline running claude \"analyze this PR\" hangs forever - what is happening, what flag fixes it, and which folk remedies fail?",
+      "answer_slot": [
+        "Claude Code is waiting for interactive input; the -p (--print) flag runs it non-interactively",
+        "-p processes the prompt, writes to stdout, and exits - what CI requires",
+        "CLAUDE_HEADLESS and --batch do not exist; stdin redirection does not address the interaction model"
+      ],
+      "answer_type": "fact-set",
+      "source": "TS 3.6 K1 S1",
+      "difficulty": "recall",
+      "scenario_hooks": [
+        "SC5"
+      ]
+    },
+    {
+      "id": "D3.T6.S1.Q2",
+      "question": "Your CI must post review findings as inline PR comments automatically - which CLI flags produce output a script can rely on, and what does each contribute?",
+      "answer_slot": [
+        "--output-format json makes the output machine-parseable",
+        "--json-schema constrains the JSON to your findings schema",
+        "together they turn free text into a stable automation contract"
+      ],
+      "answer_type": "procedure-with-rationale",
+      "source": "TS 3.6 K2 S2",
+      "difficulty": "application",
+      "scenario_hooks": [
+        "SC5"
+      ]
+    },
+    {
+      "id": "D4.T1.S1.Q1",
+      "question": "You added 'be conservative and only report high-confidence findings' and the false positive rate did not move - why do such instructions fail, and what class of instruction works?",
+      "answer_slot": [
+        "confidence-based filtering gives the model no operational definition of what to skip",
+        "specific categorical criteria work: report bugs and security issues, skip minor style and local patterns",
+        "the model needs category boundaries, not a dial for a confidence it cannot calibrate"
+      ],
+      "answer_type": "diagnosis-with-rationale",
+      "source": "TS 4.1 K2 S1",
+      "difficulty": "analysis",
+      "scenario_hooks": [
+        "SC5"
+      ]
+    },
+    {
+      "id": "D4.T1.S2.Q1",
+      "question": "One review category produces mostly noise and developers have started dismissing everything - what is the immediate move and what is its exit condition?",
+      "answer_slot": [
+        "temporarily disable the high false-positive categories",
+        "keep accurate categories running so trust can rebuild on real signal",
+        "re-enable a category once its improved prompt demonstrates acceptable precision"
+      ],
+      "answer_type": "procedure-with-rationale",
+      "source": "TS 4.1 K3 S2",
+      "difficulty": "application",
+      "scenario_hooks": [
+        "SC5"
+      ]
+    },
+    {
+      "id": "D4.T2.S1.Q1",
+      "question": "Detailed instructions still yield inconsistently formatted, hit-or-miss output - what technique do you reach for, with how many examples, targeted at what?",
+      "answer_slot": [
+        "add few-shot examples - the most effective technique for consistent, actionable output",
+        "2-4 targeted examples, not a large pile",
+        "target the ambiguous scenarios where behavior actually diverges"
+      ],
+      "answer_type": "procedure-with-rationale",
+      "source": "TS 4.2 K1 S1",
+      "difficulty": "application",
+      "scenario_hooks": [
+        "SC5",
+        "SC1"
+      ]
+    },
+    {
+      "id": "D4.T2.S2.Q2",
+      "question": "Extraction returns empty/null for required fields that ARE present in oddly formatted documents - what is the few-shot fix and why does it also reduce hallucination?",
+      "answer_slot": [
+        "add examples showing correct extraction from documents with varied formats (informal measurements, unusual layouts)",
+        "the model learns to recognize the information despite surface variation",
+        "demonstrated grounded extraction reduces both misses and fabricated values"
+      ],
+      "answer_type": "procedure-with-rationale",
+      "source": "TS 4.2 K4 S5",
+      "difficulty": "application",
+      "scenario_hooks": [
+        "SC6"
+      ]
+    },
+    {
+      "id": "D4.T3.S1.Q2",
+      "question": "What precisely may and must the model do under tool_choice auto, any, and forced - and in which one situation is each the right setting?",
+      "answer_slot": [
+        "auto: may call a tool or answer in text - right for genuinely optional tool use",
+        "any: must call some tool, model picks which - right when structure is mandatory but the schema choice is the model's",
+        "forced {type:'tool',name:...}: must call that tool - right when one specific extraction must run"
+      ],
+      "answer_type": "fact-set",
+      "source": "TS 4.3 K2",
+      "difficulty": "recall",
+      "scenario_hooks": [
+        "SC6"
+      ]
+    },
+    {
+      "id": "D4.T3.S2.Q1",
+      "question": "The model keeps inventing plausible values for fields the source document simply lacks - which schema decision causes this and what is the fix?",
+      "answer_slot": [
+        "cause: the fields are marked required, forcing a value to satisfy the schema",
+        "fix: make such fields optional/nullable so absence is representable",
+        "rule: schema optionality must mirror real-world availability of the information"
+      ],
+      "answer_type": "diagnosis-with-rationale",
+      "source": "TS 4.3 K4 S4",
+      "difficulty": "analysis",
+      "scenario_hooks": [
+        "SC6"
+      ]
+    },
+    {
+      "id": "D4.T4.S1.Q2",
+      "question": "Which validation failures will retries never fix no matter how good the feedback, and what signal tells you to stop retrying?",
+      "answer_slot": [
+        "failures where the required information is simply absent from the provided source (e.g. exists only in an external document)",
+        "signal: the error is about missing information, not about format or structure",
+        "correct response: route to a different remedy (get the source, mark null, human review) instead of burning retries"
+      ],
+      "answer_type": "diagnosis-with-rationale",
+      "source": "TS 4.4 K2 S2",
+      "difficulty": "analysis",
+      "scenario_hooks": [
+        "SC6"
+      ]
+    },
+    {
+      "id": "D4.T4.S2.Q1",
+      "question": "Developers dismiss many review findings and you want to fix the prompt systematically rather than anecdotally - what field do you add to each finding and what analysis does it unlock?",
+      "answer_slot": [
+        "add a detected_pattern field recording which code construct triggered the finding",
+        "dismissals can then be aggregated by pattern to reveal systematic false-positive sources",
+        "prompt fixes target measured patterns instead of vibes"
+      ],
+      "answer_type": "procedure-with-rationale",
+      "source": "TS 4.4 K3 S3",
+      "difficulty": "application",
+      "scenario_hooks": [
+        "SC5"
+      ]
+    },
+    {
+      "id": "D4.T5.S1.Q1",
+      "question": "A manager proposes moving both a blocking pre-merge check and an overnight tech-debt report to the Batch API for cost savings - what is the correct split and the deciding property?",
+      "answer_slot": [
+        "batch the overnight report; keep the pre-merge check synchronous",
+        "deciding property: batch has no latency SLA and can take up to 24 hours - unacceptable where developers block",
+        "'usually faster' is not a guarantee; matching API to latency requirement beats uniform migration"
+      ],
+      "answer_type": "diagnosis-with-rationale",
+      "source": "TS 4.5 K2 S1",
+      "difficulty": "analysis",
+      "scenario_hooks": [
+        "SC5"
+      ]
+    },
+    {
+      "id": "D4.T5.S2.Q2",
+      "question": "A batch returns with some items failed - what do you resubmit, how do you know which items those are, and what do you change on resubmission?",
+      "answer_slot": [
+        "resubmit only the failed documents, not the whole batch",
+        "identify them via their custom_id correlation fields",
+        "modify per failure cause - e.g. chunk documents that exceeded context limits"
+      ],
+      "answer_type": "procedure-with-rationale",
+      "source": "TS 4.5 K4 S3",
+      "difficulty": "application",
+      "scenario_hooks": [
+        "SC6"
+      ]
+    },
+    {
+      "id": "D4.T6.S1.Q1",
+      "question": "Why does the session that generated code systematically miss its own subtle bugs even when told to 'review carefully' or given extended thinking, and what architecture fixes it?",
+      "answer_slot": [
+        "the generation session retains its reasoning context - it re-justifies rather than questions its decisions",
+        "self-review instructions and extended thinking do not remove that bias",
+        "fix: a second independent Claude instance reviewing without the generator's reasoning context"
+      ],
+      "answer_type": "diagnosis-with-rationale",
+      "source": "TS 4.6 K1,K2 S1",
+      "difficulty": "analysis",
+      "scenario_hooks": [
+        "SC5"
+      ]
+    },
+    {
+      "id": "D4.T6.S2.Q1",
+      "question": "A single-pass review of a 14-file PR gives uneven depth, misses obvious bugs, and contradicts itself between files - what restructuring fixes it and why do bigger contexts or majority voting not?",
+      "answer_slot": [
+        "split into per-file passes for local issues plus a separate integration-focused pass for cross-file data flow",
+        "root cause is attention dilution - larger context windows do not restore attention quality",
+        "majority-of-three voting suppresses intermittently-caught real bugs; splitting PRs shifts burden to developers"
+      ],
+      "answer_type": "diagnosis-with-rationale",
+      "source": "TS 4.6 K3 S2",
+      "difficulty": "analysis",
+      "scenario_hooks": [
+        "SC5"
+      ]
+    },
+    {
+      "id": "D5.T1.S1.Q1",
+      "question": "After progressive summarization, the agent misquotes the refund amount and promised dates - what got lost, and what structure prevents it?",
+      "answer_slot": [
+        "summaries condensed exact numbers, dates, and customer-stated expectations into vague prose",
+        "extract transactional facts (amounts, dates, order numbers, statuses) into a persistent case-facts block",
+        "the block rides in every prompt outside the summarized history, immune to compression"
+      ],
+      "answer_type": "diagnosis-with-rationale",
+      "source": "TS 5.1 K1 S1",
+      "difficulty": "analysis",
+      "scenario_hooks": [
+        "SC1"
+      ]
+    },
+    {
+      "id": "D5.T1.S2.Q2",
+      "question": "Findings from the middle of a long aggregated input keep getting omitted - what is the effect called, what are the two structural mitigations, and what must subagent outputs carry for synthesis to stay accurate?",
+      "answer_slot": [
+        "the lost-in-the-middle effect: beginning and end process reliably, middles get dropped",
+        "mitigate: key-findings summary at the beginning, detailed results organized with explicit section headers",
+        "subagent outputs must include metadata (dates, source locations, methodological context) so downstream synthesis stays accurate"
+      ],
+      "answer_type": "diagnosis-with-rationale",
+      "source": "TS 5.1 K2 S4,S5",
+      "difficulty": "analysis",
+      "scenario_hooks": [
+        "SC3",
+        "SC1"
+      ]
+    },
+    {
+      "id": "D5.T2.S1.Q1",
+      "question": "First-contact resolution is far below target: the agent escalates straightforward damage claims yet attempts policy-exception cases alone - what fix addresses the root cause, and why do confidence thresholds, trained classifiers, and sentiment routing all miss it?",
+      "answer_slot": [
+        "root cause: unclear decision boundaries - add explicit escalation criteria with few-shot escalate-vs-resolve examples to the system prompt",
+        "self-reported confidence is poorly calibrated (the agent is already wrongly confident); classifiers are over-engineering before prompt optimization is tried",
+        "sentiment tracks emotion, not case complexity - a different variable entirely"
+      ],
+      "answer_type": "diagnosis-with-rationale",
+      "source": "TS 5.2 K3 S1",
+      "difficulty": "analysis",
+      "scenario_hooks": [
+        "SC1"
+      ]
+    },
+    {
+      "id": "D5.T2.S2.Q2",
+      "question": "get_customer returns three plausible matches - what must the agent do, and why is picking the best-looking match an anti-pattern?",
+      "answer_slot": [
+        "ask the customer for additional identifiers to disambiguate",
+        "heuristic selection risks acting on the wrong account - misdirected refunds and privacy exposure",
+        "clarification is the required response to identity ambiguity"
+      ],
+      "answer_type": "procedure-with-rationale",
+      "source": "TS 5.2 K4 S5",
+      "difficulty": "application",
+      "scenario_hooks": [
+        "SC1"
+      ]
+    },
+    {
+      "id": "D5.T3.S1.Q1",
+      "question": "A web-search subagent times out mid-research - what exactly should it return to the coordinator, and what recovery option does each element unlock?",
+      "answer_slot": [
+        "failure type (what happened) -> retry-vs-abandon; attempted query -> retry with modification",
+        "partial results -> proceed with what exists; potential alternatives -> redirect strategy",
+        "the payload is designed backward from the coordinator's decision space"
+      ],
+      "answer_type": "procedure-with-rationale",
+      "source": "TS 5.3 K1 S1",
+      "difficulty": "application",
+      "scenario_hooks": [
+        "SC3"
+      ]
+    },
+    {
+      "id": "D5.T3.S2.Q1",
+      "question": "What are the two opposite error-propagation anti-patterns, and what is the disciplined middle path between them, including who retries what?",
+      "answer_slot": [
+        "anti-pattern 1: returning empty results marked successful - suppression prevents any recovery and corrupts outputs",
+        "anti-pattern 2: propagating the exception to kill the entire workflow when recovery could succeed",
+        "middle: local recovery for transient failures; propagate only unresolvables, with what was attempted and partial results"
+      ],
+      "answer_type": "diagnosis-with-rationale",
+      "source": "TS 5.3 K4 S3",
+      "difficulty": "analysis",
+      "scenario_hooks": [
+        "SC3"
+      ]
+    },
+    {
+      "id": "D5.T4.S1.Q1",
+      "question": "An hour into exploration, the agent starts describing 'typical repository patterns' instead of the specific classes it actually found earlier - what is happening and what two immediate mechanisms respond?",
+      "answer_slot": [
+        "context degradation: the specifics have effectively fallen out of usable context",
+        "reference the scratchpad of recorded findings to re-ground answers",
+        "/compact to reduce context consumed by verbose discovery output"
+      ],
+      "answer_type": "diagnosis-with-rationale",
+      "source": "TS 5.4 K1 S5",
+      "difficulty": "analysis",
+      "scenario_hooks": [
+        "SC2",
+        "SC4"
+      ]
+    },
+    {
+      "id": "D5.T4.S2.Q2",
+      "question": "Design crash recovery for a long multi-agent exploration - what does each agent export, what does the coordinator load on resume, and where does recovered state go?",
+      "answer_slot": [
+        "each agent exports structured state to a known location as it works",
+        "on resume the coordinator loads a manifest of that state",
+        "recovered state is injected into agent prompts so work resumes rather than restarts"
+      ],
+      "answer_type": "procedure-with-rationale",
+      "source": "TS 5.4 K4 S4",
+      "difficulty": "application",
+      "scenario_hooks": [
+        "SC2",
+        "SC4"
+      ]
+    },
+    {
+      "id": "D5.T5.S1.Q1",
+      "question": "The system shows 97% aggregate accuracy and leadership wants to drop human review - what is wrong with the number, and what analysis must precede any reduction?",
+      "answer_slot": [
+        "aggregates can hide failing segments - one document type or field may be far below 97%",
+        "analyze accuracy by document type and by field to verify consistent performance across all segments",
+        "automate only segments individually proven, not the average"
+      ],
+      "answer_type": "diagnosis-with-rationale",
+      "source": "TS 5.5 K1,K4 S2",
+      "difficulty": "analysis",
+      "scenario_hooks": [
+        "SC6"
+      ]
+    },
+    {
+      "id": "D5.T5.S2.Q1",
+      "question": "Raw model confidence scores cannot be trusted as thresholds - what turns them into a usable routing signal, at what granularity?",
+      "answer_slot": [
+        "have the model output field-level confidence scores (not one blob per document)",
+        "calibrate review thresholds using labeled validation sets",
+        "calibration maps raw scores to observed error rates - the score becomes meaningful only through it"
+      ],
+      "answer_type": "procedure-with-rationale",
+      "source": "TS 5.5 K3 S3",
+      "difficulty": "application",
+      "scenario_hooks": [
+        "SC6"
+      ]
+    },
+    {
+      "id": "D5.T6.S1.Q1",
+      "question": "Final reports contain claims nobody can trace to a source though every subagent cited carefully - where was attribution lost, and what output contract prevents it?",
+      "answer_slot": [
+        "lost in summarization/synthesis steps that compressed findings without carrying claim-source mappings",
+        "contract: subagents emit structured claim-source mappings (source URLs, document names, relevant excerpts)",
+        "downstream agents are required to preserve and merge the mappings through every synthesis step"
+      ],
+      "answer_type": "diagnosis-with-rationale",
+      "source": "TS 5.6 K1,K2 S1",
+      "difficulty": "analysis",
+      "scenario_hooks": [
+        "SC3"
+      ]
+    },
+    {
+      "id": "D5.T6.S2.Q1",
+      "question": "Two credible sources report different values for the same statistic - what does the analysis agent do with them, and who reconciles?",
+      "answer_slot": [
+        "complete the analysis with BOTH values included and the conflict explicitly annotated with source attribution",
+        "never arbitrarily select one value",
+        "the coordinator decides how to reconcile before passing to synthesis"
+      ],
+      "answer_type": "procedure-with-rationale",
+      "source": "TS 5.6 K3 S3",
+      "difficulty": "application",
+      "scenario_hooks": [
+        "SC3"
+      ]
+    }
+  ],
+  "sample_questions": [
+    {
+      "n": 1,
+      "scenario": "Customer Support Resolution Agent",
+      "stem": "Production data shows that in 12% of cases, your agent skips get_customer entirely and calls lookup_order using only the customer's stated name, occasionally leading to misidentified accounts and incorrect refunds. What change would most effectively address this reliability issue?",
+      "options": {
+        "A": "Add a programmatic prerequisite that blocks lookup_order and process_refund calls until get_customer has returned a verified customer ID.",
+        "B": "Enhance the system prompt to state that customer verification via get_customer is mandatory before any order operations.",
+        "C": "Add few-shot examples showing the agent always calling get_customer first, even when customers volunteer order details.",
+        "D": "Implement a routing classifier that analyzes each request and enables only the subset of tools appropriate for that request type."
+      },
+      "correct": "A",
+      "rationale": "When a specific tool sequence is required for critical business logic (like verifying customer identity before processing refunds), programmatic enforcement provides deterministic guarantees that prompt-based approaches cannot. Options B and C rely on probabilistic LLM compliance, which is insufficient when errors have financial consequences. Option D addresses tool availability rather than tool ordering, which is not the actual problem.",
+      "domains": [
+        "D1"
+      ]
+    },
+    {
+      "n": 2,
+      "scenario": "Customer Support Resolution Agent",
+      "stem": "Production logs show the agent frequently calls get_customer when users ask about orders (e.g., \"check my order #12345\"), instead of calling lookup_order. Both tools have minimal descriptions (\"Retrieves customer information\" / \"Retrieves order details\") and accept similar identifier formats. What's the most effective first step to improve tool selection reliability?",
+      "options": {
+        "A": "Add few-shot examples to the system prompt demonstrating correct tool selection patterns, with 5-8 examples showing order-related queries routing to lookup_order.",
+        "B": "Expand each tool's description to include input formats it handles, example queries, edge cases, and boundaries explaining when to use it versus similar tools.",
+        "C": "Implement a routing layer that parses user input before each turn and pre-selects the appropriate tool based on detected keywords and identifier patterns.",
+        "D": "Consolidate both tools into a single lookup_entity tool that accepts any identifier and internally determines which backend to query."
+      },
+      "correct": "B",
+      "rationale": "Tool descriptions are the primary mechanism LLMs use for tool selection. When descriptions are minimal, models lack the context to differentiate between similar tools. Option B directly addresses this root cause with a low-effort, high-leverage fix. Few-shot examples (A) add token overhead without fixing the underlying issue. A routing layer (C) is over-engineered and bypasses the LLM's natural language understanding. Consolidating tools (D) is a valid architectural choice but requires more effort than a \"first step\" warrants when the immediate problem is inadequate descriptions.",
+      "domains": [
+        "D2"
+      ]
+    },
+    {
+      "n": 3,
+      "scenario": "Customer Support Resolution Agent",
+      "stem": "Your agent achieves 55% first-contact resolution, well below the 80% target. Logs show it escalates straightforward cases (standard damage replacements with photo evidence) while attempting to autonomously handle complex situations requiring policy exceptions. What's the most effective way to improve escalation calibration?",
+      "options": {
+        "A": "Add explicit escalation criteria to your system prompt with few-shot examples demonstrating when to escalate versus resolve autonomously.",
+        "B": "Have the agent self-report a confidence score (1-10) before each response and automatically route requests to humans when confidence falls below a threshold.",
+        "C": "Deploy a separate classifier model trained on historical tickets to predict which requests need escalation before the main agent begins processing.",
+        "D": "Implement sentiment analysis to detect customer frustration levels and automatically escalate when negative sentiment exceeds a threshold."
+      },
+      "correct": "A",
+      "rationale": "Adding explicit escalation criteria with few-shot examples directly addresses the root cause: unclear decision boundaries. This is the proportionate first response before adding infrastructure. Option B fails because LLM self-reported confidence is poorly calibrated\u2014the agent is already incorrectly confident on hard cases. Option C is over-engineered, requiring labeled data and ML infrastructure when prompt optimization hasn't been tried. Option D solves a different problem entirely; sentiment doesn't correlate with case complexity, which is the actual issue.",
+      "domains": [
+        "D5"
+      ]
+    },
+    {
+      "n": 4,
+      "scenario": "Code Generation with Claude Code",
+      "stem": "You want to create a custom /review slash command that runs your team's standard code review checklist. This command should be available to every developer when they clone or pull the repository. Where should you create this command file?",
+      "options": {
+        "A": "In the .claude/commands/ directory in the project repository",
+        "B": "In ~/.claude/commands/ in each developer's home directory",
+        "C": "In the CLAUDE.md file at the project root",
+        "D": "In a .claude/config.json file with a commands array"
+      },
+      "correct": "A",
+      "rationale": "Project-scoped custom slash commands should be stored in the .claude/commands/ directory within the repository. These commands are version-controlled and automatically available to all developers when they clone or pull the repo. Option B (~/.claude/commands/) is for personal commands that aren't shared via version control. Option C (CLAUDE.md) is for project instructions and context, not command definitions. Option D describes a configuration mechanism that doesn't exist in Claude Code.",
+      "domains": [
+        "D3"
+      ]
+    },
+    {
+      "n": 5,
+      "scenario": "Code Generation with Claude Code",
+      "stem": "You've been assigned to restructure the team's monolithic application into microservices. This will involve changes across dozens of files and requires decisions about service boundaries and module dependencies. Which approach should you take?",
+      "options": {
+        "A": "Enter plan mode to explore the codebase, understand dependencies, and design an implementation approach before making changes.",
+        "B": "Start with direct execution and make changes incrementally, letting the implementation reveal the natural service boundaries.",
+        "C": "Use direct execution with comprehensive upfront instructions detailing exactly how each service should be structured.",
+        "D": "Begin in direct execution mode and only switch to plan mode if you encounter unexpected complexity during implementation."
+      },
+      "correct": "A",
+      "rationale": "Plan mode is designed for complex tasks involving large-scale changes, multiple valid approaches, and architectural decisions\u2014exactly what monolith-to-microservices restructuring requires. It enables safe codebase exploration and design before committing to changes. Option B risks costly rework when dependencies are discovered late. Option C assumes you already know the right structure without exploring the code. Option D ignores that the complexity is already stated in the requirements, not something that might emerge later.",
+      "domains": [
+        "D3"
+      ]
+    },
+    {
+      "n": 6,
+      "scenario": "Code Generation with Claude Code",
+      "stem": "Your codebase has distinct areas with different coding conventions: React components use functional style with hooks, API handlers use async/await with specific error handling, and database models follow a repository pattern. Test files are spread throughout the codebase alongside the code they test (e.g., Button.test.tsx next to Button.tsx), and you want all tests to follow the same conventions regardless of location. What's the most maintainable way to ensure Claude automatically applies the correct conventions when generating code?",
+      "options": {
+        "A": "Create rule files in .claude/rules/ with YAML frontmatter specifying glob patterns to conditionally apply conventions based on file paths",
+        "B": "Consolidate all conventions in the root CLAUDE.md file under headers for each area, relying on Claude to infer which section applies",
+        "C": "Create skills in .claude/skills/ for each code type that include the relevant conventions in their SKILL.md files",
+        "D": "Place a separate CLAUDE.md file in each subdirectory containing that area's specific conventions"
+      },
+      "correct": "A",
+      "rationale": "Option A is correct because .claude/rules/ with glob patterns (e.g., **/*.test.tsx) allows conventions to be automatically applied based on file paths regardless of directory location, essential for test files spread throughout the codebase. Option B relies on inference rather than explicit matching, making it unreliable. Option C requires manual skill invocation or relies on Claude choosing to load them, contradicting the need for deterministic \"automatic\" application based on file paths. Option D can't easily handle files spread across many directories since CLAUDE.md files are directory-bound.",
+      "domains": [
+        "D3"
+      ]
+    },
+    {
+      "n": 7,
+      "scenario": "Multi-Agent Research System",
+      "stem": "After running the system on the topic \"impact of AI on creative industries,\" you observe that each subagent completes successfully: the web search agent finds relevant articles, the document analysis agent summarizes papers correctly, and the synthesis agent produces coherent output. However, the final reports cover only visual arts, completely missing music, writing, and film production. When you examine the coordinator's logs, you see it decomposed the topic into three subtasks: \"AI in digital art creation,\" \"AI in graphic design,\" and \"AI in photography.\" What is the most likely root cause?",
+      "options": {
+        "A": "The synthesis agent lacks instructions for identifying coverage gaps in the findings it receives from other agents.",
+        "B": "The coordinator agent's task decomposition is too narrow, resulting in subagent assignments that don't cover all relevant domains of the topic.",
+        "C": "The web search agent's queries are not comprehensive enough and need to be expanded to cover more creative industry sectors.",
+        "D": "The document analysis agent is filtering out sources related to non-visual creative industries due to overly restrictive relevance criteria."
+      },
+      "correct": "B",
+      "rationale": "The coordinator's logs reveal the root cause directly: it decomposed \"creative industries\" into only visual arts subtasks (digital art, graphic design, photography), completely omitting music, writing, and film. The subagents executed their assigned tasks correctly\u2014the problem is what they were assigned. Options A, C, and D incorrectly blame downstream agents that are working correctly within their assigned scope.",
+      "domains": [
+        "D1"
+      ]
+    },
+    {
+      "n": 8,
+      "scenario": "Multi-Agent Research System",
+      "stem": "The web search subagent times out while researching a complex topic. You need to design how this failure information flows back to the coordinator agent. Which error propagation approach best enables intelligent recovery?",
+      "options": {
+        "A": "Return structured error context to the coordinator including the failure type, the attempted query, any partial results, and potential alternative approaches.",
+        "B": "Implement automatic retry logic with exponential backoff within the subagent, returning a generic \"search unavailable\" status only after all retries are exhausted.",
+        "C": "Catch the timeout within the subagent and return an empty result set marked as successful.",
+        "D": "Propagate the timeout exception directly to a top-level handler that terminates the entire research workflow."
+      },
+      "correct": "A",
+      "rationale": "Structured error context gives the coordinator the information it needs to make intelligent recovery decisions\u2014whether to retry with a modified query, try an alternative approach, or proceed with partial results. Option B's generic status hides valuable context from the coordinator, preventing informed decisions. Option C suppresses the error by marking failure as success, which prevents any recovery and risks incomplete research outputs. Option D terminates the entire workflow unnecessarily when recovery strategies could succeed.",
+      "domains": [
+        "D5"
+      ]
+    },
+    {
+      "n": 9,
+      "scenario": "Multi-Agent Research System",
+      "stem": "During testing, you observe that the synthesis agent frequently needs to verify specific claims while combining findings. Currently, when verification is needed, the synthesis agent returns control to the coordinator, which invokes the web search agent, then re-invokes synthesis with results. This adds 2-3 round trips per task and increases latency by 40%. Your evaluation shows that 85% of these verifications are simple fact-checks (dates, names, statistics) while 15% require deeper investigation. What's the most effective approach to reduce overhead while maintaining system reliability?",
+      "options": {
+        "A": "Give the synthesis agent a scoped verify_fact tool for simple lookups, while complex verifications continue delegating to the web search agent through the coordinator.",
+        "B": "Have the synthesis agent accumulate all verification needs and return them as a batch to the coordinator at the end of its pass, which then sends them all to the web search agent at once.",
+        "C": "Give the synthesis agent access to all web search tools so it can handle any verification need directly without round-trips through the coordinator.",
+        "D": "Have the web search agent proactively cache extra context around each source during initial research, anticipating what the synthesis agent might need to verify."
+      },
+      "correct": "A",
+      "rationale": "Option A applies the principle of least privilege by giving the synthesis agent only what it needs for the 85% common case (simple fact verification) while preserving the existing coordination pattern for complex cases. Option B's batching approach creates blocking dependencies since synthesis steps may depend on earlier verified facts. Option C over-provisions the synthesis agent, violating separation of concerns. Option D relies on speculative caching that cannot reliably predict what the synthesis agent will need to verify.",
+      "domains": [
+        "D2"
+      ]
+    },
+    {
+      "n": 10,
+      "scenario": "Claude Code for Continuous Integration",
+      "stem": "Your pipeline script runs claude \"Analyze this pull request for security issues\" but the job hangs indefinitely. Logs indicate Claude Code is waiting for interactive input. What's the correct approach to run Claude Code in an automated pipeline?",
+      "options": {
+        "A": "Add the -p flag: claude -p \"Analyze this pull request for security issues\"",
+        "B": "Set the environment variable CLAUDE_HEADLESS=true before running the command",
+        "C": "Redirect stdin from /dev/null: claude \"Analyze this pull request for security issues\" < /dev/null",
+        "D": "Add the --batch flag: claude --batch \"Analyze this pull request for security issues\""
+      },
+      "correct": "A",
+      "rationale": "The -p (or --print) flag is the documented way to run Claude Code in non-interactive mode. It processes the prompt, outputs the result to stdout, and exits without waiting for user input\u2014exactly what CI/CD pipelines require. The other options reference non-existent features (CLAUDE_HEADLESS environment variable, --batch flag) or use Unix workarounds that don't properly address Claude Code's command syntax.",
+      "domains": [
+        "D3"
+      ]
+    },
+    {
+      "n": 11,
+      "scenario": "Claude Code for Continuous Integration",
+      "stem": "Your team wants to reduce API costs for automated analysis. Currently, real-time Claude calls power two workflows: (1) a blocking pre-merge check that must complete before developers can merge, and (2) a technical debt report generated overnight for review the next morning. Your manager proposes switching both to the Message Batches API for its 50% cost savings. How should you evaluate this proposal?",
+      "options": {
+        "A": "Use batch processing for the technical debt reports only; keep real-time calls for pre-merge checks.",
+        "B": "Switch both workflows to batch processing with status polling to check for completion.",
+        "C": "Keep real-time calls for both workflows to avoid batch result ordering issues.",
+        "D": "Switch both to batch processing with a timeout fallback to real-time if batches take too long."
+      },
+      "correct": "A",
+      "rationale": "The Message Batches API offers 50% cost savings but has processing times up to 24 hours with no guaranteed latency SLA. This makes it unsuitable for blocking pre-merge checks where developers wait for results, but ideal for overnight batch jobs like technical debt reports. Option B is wrong because relying on \"often faster\" completion isn't acceptable for blocking workflows. Option C reflects a misconception\u2014batch results can be correlated using custom_id fields. Option D adds unnecessary complexity when the simpler solution is matching each API to its appropriate use case.",
+      "domains": [
+        "D4"
+      ]
+    },
+    {
+      "n": 12,
+      "scenario": "Claude Code for Continuous Integration",
+      "stem": "A pull request modifies 14 files across the stock tracking module. Your single-pass review analyzing all files together produces inconsistent results: detailed feedback for some files but superficial comments for others, obvious bugs missed, and contradictory feedback\u2014flagging a pattern as problematic in one file while approving identical code elsewhere in the same PR. How should you restructure the review?",
+      "options": {
+        "A": "Split into focused passes: analyze each file individually for local issues, then run a separate integration-focused pass examining cross-file data flow.",
+        "B": "Require developers to split large PRs into smaller submissions of 3-4 files before the automated review runs.",
+        "C": "Switch to a higher-tier model with a larger context window to give all 14 files adequate attention in one pass.",
+        "D": "Run three independent review passes on the full PR and only flag issues that appear in at least two of the three runs."
+      },
+      "correct": "A",
+      "rationale": "Splitting reviews into focused passes directly addresses the root cause: attention dilution when processing many files at once. File-by-file analysis ensures consistent depth, while a separate integration pass catches cross-file issues. Option B shifts burden to developers without improving the system. Option C misunderstands that larger context windows don't solve attention quality issues. Option D would actually suppress detection of real bugs by requiring consensus on issues that may only be caught intermittently.",
+      "domains": [
+        "D4"
+      ]
+    }
+  ]
+}

@@ -1,12 +1,12 @@
 {
   "meta": {
     "title": "CCAF Field Course",
-    "subtitle": "Claude Certified Architect \u2013 Foundations",
+    "subtitle": "Claude Certified Architect – Foundations",
     "code": "CCAR-F",
-    "tagline": "Sixty items. One hundred twenty minutes. One durable setup \u2014 not prompt tricks.",
+    "tagline": "Sixty items. One hundred twenty minutes. One durable setup — not prompt tricks.",
     "voice": "manu",
     "exam": {
-      "name": "Claude Certified Architect \u2013 Foundations",
+      "name": "Claude Certified Architect – Foundations",
       "code": "CCAR-F",
       "items": 60,
       "duration_min": 120,
@@ -44,7 +44,8 @@
       "effective_date_verbatim": false,
       "retake_policy_verbatim": false
     },
-    "verified_at": "2026-08-01"
+    "verified_at": "2026-08-01",
+    "research_note": "Fact packs refreshed from official hosts (platform.claude.com, code.claude.com, docs.claude.com, modelcontextprotocol.io) on 2026-08-01. Public exam-guide objectives only."
   },
   "modules": [
     {
@@ -72,7 +73,7 @@
           "title": "Orchestrate multi-agent systems with coordinator-subagent patterns",
           "knowledge": [
             "Hub-and-spoke architecture where a coordinator agent manages all inter-subagent communication, error handling, and information routing",
-            "How subagents operate with isolated context\u2014they do not inherit the coordinator's conversation history automatically",
+            "How subagents operate with isolated context—they do not inherit the coordinator's conversation history automatically",
             "The role of the coordinator in task decomposition, delegation, result aggregation, and deciding which subagents to invoke based on query complexity",
             "Risks of overly narrow task decomposition by the coordinator, leading to incomplete coverage of broad research topics"
           ],
@@ -88,7 +89,7 @@
           "title": "Configure subagent invocation, context passing, and spawning",
           "knowledge": [
             "The Task tool as the mechanism for spawning subagents, and the requirement that allowedTools must include \"Task\" for a coordinator to invoke subagents",
-            "That subagent context must be explicitly provided in the prompt\u2014subagents do not automatically inherit parent context or share memory between invocations",
+            "That subagent context must be explicitly provided in the prompt—subagents do not automatically inherit parent context or share memory between invocations",
             "The AgentDefinition configuration including descriptions, system prompts, and tool restrictions for each subagent type",
             "Fork-based session management for exploring divergent approaches from a shared analysis baseline"
           ],
@@ -158,8 +159,8 @@
           ]
         }
       ],
-      "one_liner": "While stop_reason is tool_use, run the tool and send the result back. When it's end_turn, stop. Subagents get a clean room \u2014 you pass what they need.",
-      "open": "Marcus builds a support agent that keeps talking after it should have finished. He added a max-iteration cap and started parsing the assistant text for done. That is the stall \u2014 and it is not a model problem. It is a stop_reason setup problem, and it is fixable.",
+      "one_liner": "While stop_reason is tool_use, run the tool and send the result back. When it's end_turn, stop. Subagents get a clean room — you pass what they need.",
+      "open": "Marcus builds a support agent that keeps talking after it should have finished. He added a max-iteration cap and started parsing the assistant text for done. That is the stall — and it is not a model problem. It is a stop_reason setup problem, and it is fixable.",
       "teach": [
         {
           "h": "The agentic loop (one move)",
@@ -167,7 +168,7 @@
         },
         {
           "h": "Hub-and-spoke multi-agent",
-          "b": "The coordinator holds the plan. Subagents run in isolated context \u2014 they do not inherit the parent's chat. Pass findings explicitly in the spawn prompt. Route communication through the coordinator for observability."
+          "b": "The coordinator holds the plan. Subagents run in isolated context — they do not inherit the parent's chat. Pass findings explicitly in the spawn prompt. Route communication through the coordinator for observability."
         },
         {
           "h": "Agent tool (formerly Task)",
@@ -176,6 +177,14 @@
         {
           "h": "Hooks beat prompts for hard rules",
           "b": "Prompt instructions have a non-zero failure rate when money or identity is on the line. PreToolUse can block a refund above threshold. PostToolUse can normalize timestamps before the model sees them. Soft guidance stays in CLAUDE.md; hard guarantees use hooks."
+        },
+        {
+          "h": "stop_reason is the control plane",
+          "b": "Official tool-use docs: after each model response, branch on stop_reason. tool_use means execute tools and continue; end_turn (and other non-tool stops) ends the tool loop. Append tool_result blocks with matching tool_use_id — do not invent completion from prose."
+        },
+        {
+          "h": "Hooks for deterministic policy",
+          "b": "Agent SDK / Claude Code hooks (PreToolUse, PostToolUse) intercept calls and results. Use them for refund ceilings, PII scrubbing, and timestamp normalization. Soft guidance lives in prompts; hard guarantees live in code."
         }
       ],
       "anti": [
@@ -199,7 +208,7 @@
       "loop_steps": [
         "Send request (tools + messages)",
         "Inspect stop_reason",
-        "If tool_use \u2192 execute tools",
+        "If tool_use → execute tools",
         "Append tool_result (matched ids)",
         "Repeat until non-tool_use"
       ],
@@ -234,13 +243,13 @@
           "id": "D1.T1.S1.Q1",
           "prompt": "In any agentic loop, what are the steps of a single iteration from sending a request to sending the next one, and which single field decides whether the loop continues?",
           "options": [
-            "Arbitrary iteration caps as primary stop",
-            "Parse assistant text for loop termination",
-            "Assume subagents share parent memory",
-            "lists send request -> read stop_reason -> if tool_use execute tools -> append results -> resend \u00b7 identifies stop_reason as the sole continuation signal \u00b7 names the request-shaping fields the loop sets per request: max_tokens and the system prompt"
+            "Parse the assistant's natural-language reply for keywords like 'done', then optionally check stop_reason as a backup.",
+            "Run until a fixed max_iterations is hit; stop_reason is only for logging and telemetry.",
+            "Keep calling until the model stops emitting tool_use blocks in its free-text content field.",
+            "lists send request -> read stop_reason -> if tool_use execute tools -> append results -> resend · identifies stop_reason as the sole continuation signal · names the request-shaping fields the loop sets per request: max_tokens and the system prompt"
           ],
           "correctIndex": 3,
-          "explain": "lists send request -> read stop_reason -> if tool_use execute tools -> append results -> resend \u00b7 identifies stop_reason as the sole continuation signal \u00b7 names the request-shaping fields the loop sets per request: max_tokens and the system prompt",
+          "explain": "lists send request -> read stop_reason -> if tool_use execute tools -> append results -> resend · identifies stop_reason as the sole continuation signal · names the request-shaping fields the loop sets per request: max_tokens and the system prompt",
           "source": "TS 1.1 K1 S1",
           "difficulty": "recall"
         },
@@ -248,13 +257,13 @@
           "id": "D1.T1.S2.Q1",
           "prompt": "A teammate proposes ending the loop when the assistant's text contains 'TASK COMPLETE' - what makes this an anti-pattern, and what should signal completion instead?",
           "options": [
-            "Assume subagents share parent memory",
-            "Arbitrary iteration caps as primary stop",
-            "natural-language signals are probabilistic and phrasing-dependent - the model may omit or emit them spuriously \u00b7 stop_reason end_turn is the structured, reliable completion signal",
-            "Parse assistant text for loop termination"
+            "Text markers are fine if you put them in the system prompt twice; stop_reason is only for tool errors.",
+            "Use both: exit when text says TASK COMPLETE or when iterations exceed a soft cap.",
+            "natural-language signals are probabilistic and phrasing-dependent - the model may omit or emit them spuriously · stop_reason end_turn is the structured, reliable completion signal",
+            "End the loop when the assistant content is empty, because empty means no more work remains."
           ],
           "correctIndex": 2,
-          "explain": "natural-language signals are probabilistic and phrasing-dependent - the model may omit or emit them spuriously \u00b7 stop_reason end_turn is the structured, reliable completion signal",
+          "explain": "natural-language signals are probabilistic and phrasing-dependent - the model may omit or emit them spuriously · stop_reason end_turn is the structured, reliable completion signal",
           "source": "TS 1.1 S3",
           "difficulty": "application"
         },
@@ -262,13 +271,13 @@
           "id": "D1.T2.S1.Q2",
           "prompt": "Why can a subagent not simply 'know' what the coordinator or a sibling learned earlier, and what does that force the coordinator to do?",
           "options": [
-            "Parse assistant text for loop termination",
-            "Assume subagents share parent memory",
-            "Arbitrary iteration caps as primary stop",
-            "subagents run with isolated context - no automatic inheritance of coordinator history or sibling results \u00b7 coordinator must explicitly route needed information into each subagent's prompt \u00b7 forgetting this yields subagents that redo work or answer generically"
+            "Subagents share a global session memory by default, so the coordinator only needs to name the sibling agent.",
+            "Sibling agents can read each other's tool logs automatically if they run in the same process.",
+            "subagents run with isolated context - no automatic inheritance of coordinator history or sibling results · coordinator must explicitly route needed information into each subagent's prompt · forgetting this yields subagents that redo work or answer generically",
+            "Isolation only applies to tools; conversation history is always inherited from the parent turn."
           ],
-          "correctIndex": 3,
-          "explain": "subagents run with isolated context - no automatic inheritance of coordinator history or sibling results \u00b7 coordinator must explicitly route needed information into each subagent's prompt \u00b7 forgetting this yields subagents that redo work or answer generically",
+          "correctIndex": 2,
+          "explain": "subagents run with isolated context - no automatic inheritance of coordinator history or sibling results · coordinator must explicitly route needed information into each subagent's prompt · forgetting this yields subagents that redo work or answer generically",
           "source": "TS 1.2 K2,K3",
           "difficulty": "application"
         },
@@ -276,13 +285,13 @@
           "id": "D1.T2.S2.Q1",
           "prompt": "Every subagent in a research pipeline succeeded, yet the final report covers only a narrow slice of the topic - where do you look first for the root cause and why?",
           "options": [
-            "Parse assistant text for loop termination",
-            "Arbitrary iteration caps as primary stop",
-            "look at the coordinator's task decomposition - the subtasks it assigned define maximum possible coverage \u00b7 subagents executing narrow assignments correctly cannot recover breadth that was never assigned \u00b7 blaming search queries, analysis filters, or synthesis instructions misreads correct downstream behavior",
-            "Assume subagents share parent memory"
+            "Blame the synthesis prompt first — it must have ignored rich subagent outputs.",
+            "look at the coordinator's task decomposition - the subtasks it assigned define maximum possible coverage · subagents executing narrow assignments correctly cannot recover breadth that was never assigned · blaming search queries, analysis filters, or synthesis instructions misreads correct downstream behavior",
+            "Increase search breadth parameters on every subagent and re-run; decomposition is rarely the bottleneck.",
+            "Add more parallel subagents with the same prompt so statistical averaging covers more of the topic."
           ],
-          "correctIndex": 2,
-          "explain": "look at the coordinator's task decomposition - the subtasks it assigned define maximum possible coverage \u00b7 subagents executing narrow assignments correctly cannot recover breadth that was never assigned \u00b7 blaming search queries, analysis filters, or synthesis instructions misreads correct downstream behavior",
+          "correctIndex": 1,
+          "explain": "look at the coordinator's task decomposition - the subtasks it assigned define maximum possible coverage · subagents executing narrow assignments correctly cannot recover breadth that was never assigned · blaming search queries, analysis filters, or synthesis instructions misreads correct downstream behavior",
           "source": "TS 1.2 K4",
           "difficulty": "analysis"
         },
@@ -290,13 +299,13 @@
           "id": "D1.T3.S1.Q1",
           "prompt": "A coordinator's Task tool calls silently never spawn anything - what configuration must you check first, and what is the general rule it instantiates?",
           "options": [
-            "Parse assistant text for loop termination",
-            "Arbitrary iteration caps as primary stop",
-            "Assume subagents share parent memory",
-            "check that 'Task' is included in the coordinator's allowedTools \u00b7 rule: subagent spawning is itself a tool call and is gated by tool permissions like any other"
+            "Confirm the subagent system prompt mentions the word Task; tool allow-lists are optional for coordinators.",
+            "check that 'Task' is included in the coordinator's allowedTools · rule: subagent spawning is itself a tool call and is gated by tool permissions like any other",
+            "Raise max_tokens so the coordinator has room to emit spawn instructions in free text.",
+            "Disable tool_choice auto so the model is forced into multi-agent mode."
           ],
-          "correctIndex": 3,
-          "explain": "check that 'Task' is included in the coordinator's allowedTools \u00b7 rule: subagent spawning is itself a tool call and is gated by tool permissions like any other",
+          "correctIndex": 1,
+          "explain": "check that 'Task' is included in the coordinator's allowedTools · rule: subagent spawning is itself a tool call and is gated by tool permissions like any other",
           "source": "TS 1.3 K1",
           "difficulty": "recall"
         },
@@ -304,13 +313,13 @@
           "id": "D1.T3.S2.Q1",
           "prompt": "A synthesis subagent produces generic output that ignores the search results gathered minutes earlier - what is the most likely cause and the fix?",
           "options": [
-            "Parse assistant text for loop termination",
-            "Assume subagents share parent memory",
-            "Arbitrary iteration caps as primary stop",
-            "cause: findings were never placed in its prompt - subagents do not inherit parent context or share memory between invocations \u00b7 fix: include the complete prior-agent findings (search results, analysis outputs) directly in the synthesis prompt"
+            "The synthesis agent inherited search context automatically but ignored it; fix by raising temperature.",
+            "Search results live in a shared vector store that synthesis should query before answering.",
+            "cause: findings were never placed in its prompt - subagents do not inherit parent context or share memory between invocations · fix: include the complete prior-agent findings (search results, analysis outputs) directly in the synthesis prompt",
+            "Parallel spawn corrupted message ids; re-run synthesis alone without re-including findings."
           ],
-          "correctIndex": 3,
-          "explain": "cause: findings were never placed in its prompt - subagents do not inherit parent context or share memory between invocations \u00b7 fix: include the complete prior-agent findings (search results, analysis outputs) directly in the synthesis prompt",
+          "correctIndex": 2,
+          "explain": "cause: findings were never placed in its prompt - subagents do not inherit parent context or share memory between invocations · fix: include the complete prior-agent findings (search results, analysis outputs) directly in the synthesis prompt",
           "source": "TS 1.3 K2 S1",
           "difficulty": "application"
         },
@@ -318,13 +327,13 @@
           "id": "D1.T4.S1.Q1",
           "prompt": "An agent skips identity verification before financial operations in a small percent of cases despite a mandatory-sounding system prompt - why is more prompting (or few-shot examples) the wrong fix, and what is the right one?",
           "options": [
-            "Arbitrary iteration caps as primary stop",
-            "Parse assistant text for loop termination",
-            "prompt and few-shot compliance is probabilistic; any non-zero failure rate is unacceptable when errors have financial consequences \u00b7 right fix: programmatic prerequisite that blocks the downstream tools until verification returns a verified ID \u00b7 distinguishes tool-ordering problems from tool-availability problems (routing classifiers solve the wrong problem)",
-            "Assume subagents share parent memory"
+            "Add more few-shot examples of verification-before-refund; prompts are sufficient if carefully worded.",
+            "Train a separate classifier to route financial tools; keep the system prompt as soft guidance only.",
+            "prompt and few-shot compliance is probabilistic; any non-zero failure rate is unacceptable when errors have financial consequences · right fix: programmatic prerequisite that blocks the downstream tools until verification returns a verified ID · distinguishes tool-ordering problems from tool-availability problems (routing classifiers solve the wrong problem)",
+            "Lower temperature so the model is less likely to skip steps written in the system prompt."
           ],
           "correctIndex": 2,
-          "explain": "prompt and few-shot compliance is probabilistic; any non-zero failure rate is unacceptable when errors have financial consequences \u00b7 right fix: programmatic prerequisite that blocks the downstream tools until verification returns a verified ID \u00b7 distinguishes tool-ordering problems from tool-availability problems (routing classifiers solve the wrong problem)",
+          "explain": "prompt and few-shot compliance is probabilistic; any non-zero failure rate is unacceptable when errors have financial consequences · right fix: programmatic prerequisite that blocks the downstream tools until verification returns a verified ID · distinguishes tool-ordering problems from tool-availability problems (routing classifiers solve the wrong problem)",
           "source": "TS 1.4 K1,K2 S1",
           "difficulty": "analysis"
         },
@@ -332,13 +341,13 @@
           "id": "D1.T4.S2.Q2",
           "prompt": "What must a structured handoff summary contain when escalating mid-process to a human agent, and why is each field there?",
           "options": [
-            "Parse assistant text for loop termination",
-            "Assume subagents share parent memory",
-            "customer ID (so the human can act without re-identification) \u00b7 root cause analysis and refund amount / findings so far (so investigation is not repeated) \u00b7 recommended action (so the human starts from a decision, not from zero)",
-            "Arbitrary iteration caps as primary stop"
+            "Only the last three user utterances; the human can re-ask anything else.",
+            "customer ID (so the human can act without re-identification) · root cause analysis and refund amount / findings so far (so investigation is not repeated) · recommended action (so the human starts from a decision, not from zero)",
+            "A full raw transcript dump with no structure, so nothing is lost in summarization.",
+            "Sentiment score and confidence only — humans prefer short handoffs."
           ],
-          "correctIndex": 2,
-          "explain": "customer ID (so the human can act without re-identification) \u00b7 root cause analysis and refund amount / findings so far (so investigation is not repeated) \u00b7 recommended action (so the human starts from a decision, not from zero)",
+          "correctIndex": 1,
+          "explain": "customer ID (so the human can act without re-identification) · root cause analysis and refund amount / findings so far (so investigation is not repeated) · recommended action (so the human starts from a decision, not from zero)",
           "source": "TS 1.4 K3 S3",
           "difficulty": "recall"
         }
@@ -440,7 +449,7 @@
       "teach": [
         {
           "h": "Descriptions over clever schemas",
-          "b": "Say what the tool does, when to use it, when not to, inputs, outputs, and edge cases \u2014 three to four sentences minimum. Rename overlapping tools. Split generic analyze_document into purpose-specific tools."
+          "b": "Say what the tool does, when to use it, when not to, inputs, outputs, and edge cases — three to four sentences minimum. Rename overlapping tools. Split generic analyze_document into purpose-specific tools."
         },
         {
           "h": "tool_choice modes",
@@ -453,12 +462,20 @@
         {
           "h": "MCP scopes and .mcp.json",
           "b": "Project .mcp.json is shared team tooling with env expansion. User ~/.claude.json is personal. Prefer HTTP for remote servers; stdio for local. Resources expose catalogs so agents stop exploratory fishing."
+        },
+        {
+          "h": "Descriptions drive selection",
+          "b": "Define-tools guidance: clear names + rich descriptions are how the model chooses among tools. Overlapping one-liners cause systematic misroutes. tool_choice auto|any|tool controls whether a tool call is optional, required, or forced to a name."
+        },
+        {
+          "h": "MCP as the integration bus",
+          "b": "MCP separates host, client, and server. Project .mcp.json is team-shared; user config is personal. Prefer ${ENV} expansion for secrets. Structured errors (isError + category + retryability) beat opaque failure strings."
         }
       ],
       "anti": [
         {
           "bad": "18 overlapping tools on one agent",
-          "good": "4\u20135 role-scoped tools"
+          "good": "4–5 role-scoped tools"
         },
         {
           "bad": "Uniform Operation failed",
@@ -507,13 +524,13 @@
           "id": "D2.T1.S1.Q1",
           "prompt": "Users ask about orders and the agent calls get_customer instead of lookup_order; both have one-line descriptions - what is the most effective first step and why is it first?",
           "options": [
-            "expand each description: input formats handled, example queries, edge cases, boundaries versus the similar tool \u00b7 descriptions are the primary mechanism LLMs use for selection - minimal ones are the root cause \u00b7 first because low-effort/high-leverage: few-shot adds tokens without fixing the cause; routing layers and tool consolidation are heavier redesigns",
-            "Uniform Operation failed",
-            "18 overlapping tools on one agent",
-            "Secrets committed in .mcp.json"
+            "expand each description: input formats handled, example queries, edge cases, boundaries versus the similar tool · descriptions are the primary mechanism LLMs use for selection - minimal ones are the root cause · first because low-effort/high-leverage: few-shot adds tokens without fixing the cause; routing layers and tool consolidation are heavier redesigns",
+            "Immediately add a routing agent that classifies intent before any tool call.",
+            "Merge get_customer and lookup_order into one mega-tool so misrouting is impossible.",
+            "Add few-shot examples of correct tool use without touching the one-line descriptions."
           ],
           "correctIndex": 0,
-          "explain": "expand each description: input formats handled, example queries, edge cases, boundaries versus the similar tool \u00b7 descriptions are the primary mechanism LLMs use for selection - minimal ones are the root cause \u00b7 first because low-effort/high-leverage: few-shot adds tokens without fixing the cause; routing layers and tool consolidation are heavier redesigns",
+          "explain": "expand each description: input formats handled, example queries, edge cases, boundaries versus the similar tool · descriptions are the primary mechanism LLMs use for selection - minimal ones are the root cause · first because low-effort/high-leverage: few-shot adds tokens without fixing the cause; routing layers and tool consolidation are heavier redesigns",
           "source": "TS 2.1 K1 S1",
           "difficulty": "analysis"
         },
@@ -521,13 +538,13 @@
           "id": "D2.T1.S2.Q1",
           "prompt": "analyze_content and analyze_document have near-identical descriptions and get misrouted constantly - what rename-and-describe move fixes it, and what makes a name self-disambiguating?",
           "options": [
-            "Uniform Operation failed",
-            "Secrets committed in .mcp.json",
-            "rename to reflect the actual domain, e.g. analyze_content -> extract_web_results with a web-specific description \u00b7 self-disambiguating: the name itself encodes the input domain or action so overlap disappears at a glance \u00b7 name and description must agree - a good name with a generic description still misroutes",
-            "18 overlapping tools on one agent"
+            "Keep both names but add a system-prompt rule listing when to call each tool.",
+            "Prefix both names with the same namespace so the model groups them correctly.",
+            "rename to reflect the actual domain, e.g. analyze_content -> extract_web_results with a web-specific description · self-disambiguating: the name itself encodes the input domain or action so overlap disappears at a glance · name and description must agree - a good name with a generic description still misroutes",
+            "Delete one tool and force the model to use the remaining generic analyzer for every input type."
           ],
           "correctIndex": 2,
-          "explain": "rename to reflect the actual domain, e.g. analyze_content -> extract_web_results with a web-specific description \u00b7 self-disambiguating: the name itself encodes the input domain or action so overlap disappears at a glance \u00b7 name and description must agree - a good name with a generic description still misroutes",
+          "explain": "rename to reflect the actual domain, e.g. analyze_content -> extract_web_results with a web-specific description · self-disambiguating: the name itself encodes the input domain or action so overlap disappears at a glance · name and description must agree - a good name with a generic description still misroutes",
           "source": "TS 2.1 K3 S2",
           "difficulty": "application"
         },
@@ -535,13 +552,13 @@
           "id": "D2.T2.S1.Q2",
           "prompt": "What does a well-structured MCP tool error response contain, and what does the isError flag itself communicate?",
           "options": [
-            "Uniform Operation failed",
-            "18 overlapping tools on one agent",
-            "Secrets committed in .mcp.json",
-            "isError flag marks the result as a failure the agent must reason about (MCP's failure-communication pattern) \u00b7 errorCategory (transient/validation/permission), isRetryable boolean, human-readable description \u00b7 each field maps to a distinct agent decision: what happened, whether to retry, what to say"
+            "Return HTTP 500 only; the agent infers failure from missing content.",
+            "Put the error only in free-text content and leave isError false so retries stay optimistic.",
+            "isError flag marks the result as a failure the agent must reason about (MCP's failure-communication pattern) · errorCategory (transient/validation/permission), isRetryable boolean, human-readable description · each field maps to a distinct agent decision: what happened, whether to retry, what to say",
+            "Always set isError true on empty result sets so the agent keeps searching."
           ],
-          "correctIndex": 3,
-          "explain": "isError flag marks the result as a failure the agent must reason about (MCP's failure-communication pattern) \u00b7 errorCategory (transient/validation/permission), isRetryable boolean, human-readable description \u00b7 each field maps to a distinct agent decision: what happened, whether to retry, what to say",
+          "correctIndex": 2,
+          "explain": "isError flag marks the result as a failure the agent must reason about (MCP's failure-communication pattern) · errorCategory (transient/validation/permission), isRetryable boolean, human-readable description · each field maps to a distinct agent decision: what happened, whether to retry, what to say",
           "source": "TS 2.2 K1 S1",
           "difficulty": "recall"
         },
@@ -549,13 +566,13 @@
           "id": "D2.T2.S2.Q2",
           "prompt": "A search returns nothing - how must the tool distinguish 'no matches exist' from 'could not access the source', and what wrong behavior follows from conflating them?",
           "options": [
-            "Secrets committed in .mcp.json",
-            "Uniform Operation failed",
-            "18 overlapping tools on one agent",
-            "valid empty result = successful query with zero matches; access failure = error needing a retry decision \u00b7 conflation as failure triggers pointless retries of a correct answer \u00b7 conflation as success silently drops recoverable data from the research"
+            "Treat empty results as fatal errors so the coordinator always switches data sources.",
+            "valid empty result = successful query with zero matches; access failure = error needing a retry decision · conflation as failure triggers pointless retries of a correct answer · conflation as success silently drops recoverable data from the research",
+            "Collapse both cases into a single 'no data' string with isError false.",
+            "Retry empty successes three times before accepting that nothing exists."
           ],
-          "correctIndex": 3,
-          "explain": "valid empty result = successful query with zero matches; access failure = error needing a retry decision \u00b7 conflation as failure triggers pointless retries of a correct answer \u00b7 conflation as success silently drops recoverable data from the research",
+          "correctIndex": 1,
+          "explain": "valid empty result = successful query with zero matches; access failure = error needing a retry decision · conflation as failure triggers pointless retries of a correct answer · conflation as success silently drops recoverable data from the research",
           "source": "TS 2.2 S4",
           "difficulty": "application"
         },
@@ -563,13 +580,13 @@
           "id": "D2.T3.S1.Q2",
           "prompt": "A synthesis agent needs frequent simple fact-checks but full search access violates its role; round-tripping through the coordinator adds 40% latency - what design resolves this, and why not the extremes?",
           "options": [
-            "Secrets committed in .mcp.json",
-            "18 overlapping tools on one agent",
-            "give it a scoped verify_fact tool for the high-frequency simple case \u00b7 complex verifications still delegate through the coordinator to the search agent \u00b7 full search access over-provisions and violates separation of concerns; batching creates blocking dependencies; speculative caching cannot predict needs",
-            "Uniform Operation failed"
+            "Give the synthesis agent the full search tool suite to avoid coordinator round-trips.",
+            "Batch all fact-checks until the end of synthesis to minimize tool chatter.",
+            "give it a scoped verify_fact tool for the high-frequency simple case · complex verifications still delegate through the coordinator to the search agent · full search access over-provisions and violates separation of concerns; batching creates blocking dependencies; speculative caching cannot predict needs",
+            "Cache random search results preemptively so synthesis never needs verification tools."
           ],
           "correctIndex": 2,
-          "explain": "give it a scoped verify_fact tool for the high-frequency simple case \u00b7 complex verifications still delegate through the coordinator to the search agent \u00b7 full search access over-provisions and violates separation of concerns; batching creates blocking dependencies; speculative caching cannot predict needs",
+          "explain": "give it a scoped verify_fact tool for the high-frequency simple case · complex verifications still delegate through the coordinator to the search agent · full search access over-provisions and violates separation of concerns; batching creates blocking dependencies; speculative caching cannot predict needs",
           "source": "TS 2.3 K3 S3",
           "difficulty": "analysis"
         },
@@ -577,13 +594,13 @@
           "id": "D2.T3.S2.Q1",
           "prompt": "Which options does tool_choice offer, and exactly what behavior does each permit or compel?",
           "options": [
-            "Uniform Operation failed",
-            "Secrets committed in .mcp.json",
-            "18 overlapping tools on one agent",
-            "auto: tool calls optional - the model may respond with plain text \u00b7 any: a tool call is compulsory but the model chooses which tool \u00b7 forced {type:'tool', name:'...'}: that specific tool must be called"
+            "auto: may call tools or answer in text · any: must call some tool (model chooses which) · forced {type:'tool', name}: must call that specific tool",
+            "auto: always calls tools · any: random tool · forced: free-text only",
+            "tool_choice only has on/off; named forcing is not supported on Claude APIs",
+            "any: text-only responses · auto: forced multi-tool parallel calls only"
           ],
-          "correctIndex": 3,
-          "explain": "auto: tool calls optional - the model may respond with plain text \u00b7 any: a tool call is compulsory but the model chooses which tool \u00b7 forced {type:'tool', name:'...'}: that specific tool must be called",
+          "correctIndex": 0,
+          "explain": "auto: may call tools or answer in text · any: must call some tool (model chooses which) · forced {type:'tool', name}: must call that specific tool",
           "source": "TS 2.3 K4",
           "difficulty": "recall"
         },
@@ -591,13 +608,13 @@
           "id": "D2.T4.S1.Q1",
           "prompt": "A team-shared MCP server and a personal experimental one - which config file does each belong in, and what property of each file makes it the right home?",
           "options": [
-            "team-shared: project-scoped .mcp.json - version-controlled, so the whole team gets it \u00b7 personal/experimental: user-scoped ~/.claude.json - private, no teammate impact \u00b7 the scope decision is exactly the sharing decision",
-            "18 overlapping tools on one agent",
-            "Secrets committed in .mcp.json",
-            "Uniform Operation failed"
+            "Both belong in package.json so npm installs them for everyone.",
+            "team-shared: project-scoped .mcp.json - version-controlled, so the whole team gets it · personal/experimental: user-scoped ~/.claude.json - private, no teammate impact · the scope decision is exactly the sharing decision",
+            "Put experiments in project .mcp.json and team tools only in ~/.claude.json so CI stays clean.",
+            "Store both only in environment variables; files are deprecated for MCP."
           ],
-          "correctIndex": 0,
-          "explain": "team-shared: project-scoped .mcp.json - version-controlled, so the whole team gets it \u00b7 personal/experimental: user-scoped ~/.claude.json - private, no teammate impact \u00b7 the scope decision is exactly the sharing decision",
+          "correctIndex": 1,
+          "explain": "team-shared: project-scoped .mcp.json - version-controlled, so the whole team gets it · personal/experimental: user-scoped ~/.claude.json - private, no teammate impact · the scope decision is exactly the sharing decision",
           "source": "TS 2.4 K1 S1,S2",
           "difficulty": "recall"
         },
@@ -605,13 +622,13 @@
           "id": "D2.T4.S2.Q1",
           "prompt": "The agent keeps using built-in Grep instead of your far more capable MCP search tool - why, and what is the fix?",
           "options": [
-            "Secrets committed in .mcp.json",
-            "the MCP tool's description undersells it - the agent cannot know the capability advantage \u00b7 enhance the description to explain capabilities and outputs in detail \u00b7 selection is description-driven; built-ins win ties by familiarity",
-            "Uniform Operation failed",
-            "18 overlapping tools on one agent"
+            "Built-in tools always win; MCP tools cannot override Grep no matter the description.",
+            "Disable Grep globally and hope the model discovers the MCP tool by name alone.",
+            "the MCP tool's description undersells it - the agent cannot know the capability advantage · enhance the description to explain capabilities and outputs in detail · selection is description-driven; built-ins win ties by familiarity",
+            "Raise temperature so the model explores non-default tools more often."
           ],
-          "correctIndex": 1,
-          "explain": "the MCP tool's description undersells it - the agent cannot know the capability advantage \u00b7 enhance the description to explain capabilities and outputs in detail \u00b7 selection is description-driven; built-ins win ties by familiarity",
+          "correctIndex": 2,
+          "explain": "the MCP tool's description undersells it - the agent cannot know the capability advantage · enhance the description to explain capabilities and outputs in detail · selection is description-driven; built-ins win ties by familiarity",
           "source": "TS 2.4 S3",
           "difficulty": "application"
         }
@@ -629,7 +646,7 @@
           "title": "Configure CLAUDE.md files with appropriate hierarchy, scoping, and modular organization",
           "knowledge": [
             "The CLAUDE.md configuration hierarchy: user-level (~/.claude/CLAUDE.md), project-level (.claude/CLAUDE.md or root CLAUDE.md), and directory-level (subdirectory CLAUDE.md files)",
-            "That user-level settings apply only to that user\u2014instructions in ~/.claude/CLAUDE.md are not shared with teammates via version control",
+            "That user-level settings apply only to that user—instructions in ~/.claude/CLAUDE.md are not shared with teammates via version control",
             "The @import syntax for referencing external files to keep CLAUDE.md modular (e.g., importing specific standards files relevant to each package)",
             ".claude/rules/ directory for organizing topic-specific rule files as an alternative to a monolithic CLAUDE.md"
           ],
@@ -731,7 +748,7 @@
         },
         {
           "h": "Path-specific rules",
-          "b": "YAML frontmatter paths globs load rules only when matching files are edited \u2014 better token economy than dumping everything into one CLAUDE.md. Prefer globs for **/*.test.tsx over directory-only files when tests are spread out."
+          "b": "YAML frontmatter paths globs load rules only when matching files are edited — better token economy than dumping everything into one CLAUDE.md. Prefer globs for **/*.test.tsx over directory-only files when tests are spread out."
         },
         {
           "h": "Skills vs always-on memory",
@@ -740,6 +757,14 @@
         {
           "h": "Plan mode vs direct execution",
           "b": "Plan mode for multi-file architectural decisions. Direct execution for a single well-scoped change. Do not plan a one-line validation fix."
+        },
+        {
+          "h": "Memory hierarchy",
+          "b": "CLAUDE.md at project root is the shared brain. User ~/.claude/CLAUDE.md is personal. Path-scoped rules under .claude/rules/ activate by glob. Slash commands live in .claude/commands/ when they must ship with the repo."
+        },
+        {
+          "h": "Skills, plan mode, isolation",
+          "b": "Skills package repeatable workflows; context:fork keeps exploratory noise out of the main thread. Plan mode for multi-file architectural work; direct execution for one clear, local change."
         }
       ],
       "anti": [
@@ -794,13 +819,13 @@
           "id": "D3.T1.S1.Q1",
           "prompt": "A new team member's Claude Code ignores conventions everyone else gets - what misplacement explains it and what is the fix?",
           "options": [
-            "Team standards only in user CLAUDE.md",
-            "Verbose skill in main context",
-            "Monolithic 2k-line CLAUDE.md",
-            "the conventions live in someone's user-level ~/.claude/CLAUDE.md, which is not shared via version control \u00b7 fix: move team-wide instructions to project-level CLAUDE.md committed to the repo \u00b7 general law: sharing scope is determined by which level holds the instruction"
+            "Project CLAUDE.md is ignored for new clones; only user-level memory works after install.",
+            "the conventions live in someone's user-level ~/.claude/CLAUDE.md, which is not shared via version control · fix: move team-wide instructions to project-level CLAUDE.md committed to the repo · general law: sharing scope is determined by which level holds the instruction",
+            "Put conventions in a Slack pin; Claude Code automatically scrapes team chat.",
+            "Duplicate the same rules into every file's header comments instead of CLAUDE.md."
           ],
-          "correctIndex": 3,
-          "explain": "the conventions live in someone's user-level ~/.claude/CLAUDE.md, which is not shared via version control \u00b7 fix: move team-wide instructions to project-level CLAUDE.md committed to the repo \u00b7 general law: sharing scope is determined by which level holds the instruction",
+          "correctIndex": 1,
+          "explain": "the conventions live in someone's user-level ~/.claude/CLAUDE.md, which is not shared via version control · fix: move team-wide instructions to project-level CLAUDE.md committed to the repo · general law: sharing scope is determined by which level holds the instruction",
           "source": "TS 3.1 K2 S1",
           "difficulty": "application"
         },
@@ -808,13 +833,13 @@
           "id": "D3.T1.S2.Q1",
           "prompt": "Your CLAUDE.md mixes testing, API, and deployment guidance and has become unmanageable - what reorganization does Claude Code support and what does each resulting file look like?",
           "options": [
-            "Team standards only in user CLAUDE.md",
-            "Verbose skill in main context",
-            "split into focused topic files in .claude/rules/ (testing.md, api-conventions.md, deployment.md) \u00b7 each file carries one coherent concern, independently maintainable \u00b7 this replaces the monolithic CLAUDE.md pattern for large rule sets",
-            "Monolithic 2k-line CLAUDE.md"
+            "Merge everything into a single 2k-line CLAUDE.md so nothing is missed.",
+            "split into focused topic files in .claude/rules/ (testing.md, api-conventions.md, deployment.md) · each file carries one coherent concern, independently maintainable · this replaces the monolithic CLAUDE.md pattern for large rule sets",
+            "Move all guidance into ad-hoc /commands that developers must remember to run.",
+            "Store rules only in the system prompt of a custom API wrapper outside Claude Code."
           ],
-          "correctIndex": 2,
-          "explain": "split into focused topic files in .claude/rules/ (testing.md, api-conventions.md, deployment.md) \u00b7 each file carries one coherent concern, independently maintainable \u00b7 this replaces the monolithic CLAUDE.md pattern for large rule sets",
+          "correctIndex": 1,
+          "explain": "split into focused topic files in .claude/rules/ (testing.md, api-conventions.md, deployment.md) · each file carries one coherent concern, independently maintainable · this replaces the monolithic CLAUDE.md pattern for large rule sets",
           "source": "TS 3.1 K4 S3",
           "difficulty": "application"
         },
@@ -822,13 +847,13 @@
           "id": "D3.T2.S1.Q1",
           "prompt": "A /review command must be available to every developer the moment they clone or pull the repo - where does the file go, and why do the plausible alternatives fail?",
           "options": [
-            "Verbose skill in main context",
-            "Monolithic 2k-line CLAUDE.md",
-            "Team standards only in user CLAUDE.md",
-            "create it in .claude/commands/ inside the repository - version control distributes it \u00b7 ~/.claude/commands/ is personal and unshared; CLAUDE.md holds instructions, not command definitions \u00b7 no commands array in a config JSON exists"
+            "create it in .claude/commands/ inside the repository - version control distributes it · ~/.claude/commands/ is personal and unshared; CLAUDE.md holds instructions, not command definitions · no commands array in a config JSON exists",
+            "Add a commands array to package.json; Claude Code reads npm scripts as slash commands.",
+            "Put /review only in ~/.claude/commands/ so power users get it first.",
+            "Define /review inside CLAUDE.md as a markdown heading; that registers the command."
           ],
-          "correctIndex": 3,
-          "explain": "create it in .claude/commands/ inside the repository - version control distributes it \u00b7 ~/.claude/commands/ is personal and unshared; CLAUDE.md holds instructions, not command definitions \u00b7 no commands array in a config JSON exists",
+          "correctIndex": 0,
+          "explain": "create it in .claude/commands/ inside the repository - version control distributes it · ~/.claude/commands/ is personal and unshared; CLAUDE.md holds instructions, not command definitions · no commands array in a config JSON exists",
           "source": "TS 3.2 K1 S1",
           "difficulty": "recall"
         },
@@ -836,13 +861,13 @@
           "id": "D3.T2.S2.Q1",
           "prompt": "A codebase-analysis skill floods the main conversation with exploratory output - which frontmatter option fixes it, and what exactly changes at runtime?",
           "options": [
-            "context: fork - the skill runs in an isolated sub-agent context \u00b7 verbose/exploratory output stays in the fork; only results return to the main session \u00b7 same option applies to brainstorming skills whose exploration should not persist",
-            "Team standards only in user CLAUDE.md",
-            "Monolithic 2k-line CLAUDE.md",
-            "Verbose skill in main context"
+            "Set temperature 0 so exploratory output is shorter in the main transcript.",
+            "context: fork - the skill runs in an isolated sub-agent context · verbose/exploratory output stays in the fork; only results return to the main session · same option applies to brainstorming skills whose exploration should not persist",
+            "Move the skill into CLAUDE.md so it always loads and needs no isolation.",
+            "Delete intermediate tool results from the skill so main context stays clean without forking."
           ],
-          "correctIndex": 0,
-          "explain": "context: fork - the skill runs in an isolated sub-agent context \u00b7 verbose/exploratory output stays in the fork; only results return to the main session \u00b7 same option applies to brainstorming skills whose exploration should not persist",
+          "correctIndex": 1,
+          "explain": "context: fork - the skill runs in an isolated sub-agent context · verbose/exploratory output stays in the fork; only results return to the main session · same option applies to brainstorming skills whose exploration should not persist",
           "source": "TS 3.2 K3 S2",
           "difficulty": "application"
         },
@@ -850,13 +875,13 @@
           "id": "D3.T3.S1.Q1",
           "prompt": "Write the skeleton of a path-scoped rule file for Terraform conventions - what frontmatter field and value make it conditional?",
           "options": [
-            "a .claude/rules/ file with YAML frontmatter containing paths: [\"terraform/**/*\"] \u00b7 the body holds the conventions; the paths globs are the activation condition",
-            "Monolithic 2k-line CLAUDE.md",
-            "Verbose skill in main context",
-            "Team standards only in user CLAUDE.md"
+            "a .claude/rules/ file with YAML frontmatter containing paths: [\"terraform/**/*\"] · the body holds the conventions; the paths globs are the activation condition",
+            "A root CLAUDE.md paragraph titled Terraform with no path metadata.",
+            "An npm postinstall script that rewrites CLAUDE.md whenever *.tf changes.",
+            "A user-level skill with no path frontmatter that the developer must invoke manually."
           ],
           "correctIndex": 0,
-          "explain": "a .claude/rules/ file with YAML frontmatter containing paths: [\"terraform/**/*\"] \u00b7 the body holds the conventions; the paths globs are the activation condition",
+          "explain": "a .claude/rules/ file with YAML frontmatter containing paths: [\"terraform/**/*\"] · the body holds the conventions; the paths globs are the activation condition",
           "source": "TS 3.3 K1 S1",
           "difficulty": "recall"
         },
@@ -864,13 +889,13 @@
           "id": "D3.T3.S2.Q1",
           "prompt": "Test files sit next to the code they test all over the repo, and all tests must share conventions - which mechanism applies them automatically and why does each alternative fail?",
           "options": [
-            ".claude/rules/ file with a glob like **/*.test.tsx - matches by path pattern regardless of directory \u00b7 directory CLAUDE.md files are directory-bound and cannot follow scattered files \u00b7 root-CLAUDE.md headers rely on inference; skills require invocation - neither is deterministic automatic application",
-            "Verbose skill in main context",
-            "Monolithic 2k-line CLAUDE.md",
-            "Team standards only in user CLAUDE.md"
+            "One CLAUDE.md inside each package directory — path globs cannot cross folders.",
+            ".claude/rules/ file with a glob like **/*.test.tsx - matches by path pattern regardless of directory · directory CLAUDE.md files are directory-bound and cannot follow scattered files · root-CLAUDE.md headers rely on inference; skills require invocation - neither is deterministic automatic application",
+            "A skill invoked only when the developer remembers /test-conventions.",
+            "Root CLAUDE.md section headers; Claude always infers file type without globs."
           ],
-          "correctIndex": 0,
-          "explain": ".claude/rules/ file with a glob like **/*.test.tsx - matches by path pattern regardless of directory \u00b7 directory CLAUDE.md files are directory-bound and cannot follow scattered files \u00b7 root-CLAUDE.md headers rely on inference; skills require invocation - neither is deterministic automatic application",
+          "correctIndex": 1,
+          "explain": ".claude/rules/ file with a glob like **/*.test.tsx - matches by path pattern regardless of directory · directory CLAUDE.md files are directory-bound and cannot follow scattered files · root-CLAUDE.md headers rely on inference; skills require invocation - neither is deterministic automatic application",
           "source": "TS 3.3 K3 S3",
           "difficulty": "analysis"
         },
@@ -878,13 +903,13 @@
           "id": "D3.T4.S1.Q1",
           "prompt": "Restructuring a monolith into microservices touches dozens of files and demands service-boundary decisions - which mode and what does it buy before any change is made?",
           "options": [
-            "Team standards only in user CLAUDE.md",
-            "Verbose skill in main context",
-            "Monolithic 2k-line CLAUDE.md",
-            "plan mode - the task has large scale, architectural decisions, and multiple valid approaches \u00b7 buys safe exploration of the codebase and dependency understanding before committing \u00b7 prevents costly rework from late-discovered dependencies"
+            "Direct execution with maximum parallelism across all services at once.",
+            "plan mode - the task has large scale, architectural decisions, and multiple valid approaches · buys safe exploration of the codebase and dependency understanding before committing · prevents costly rework from late-discovered dependencies",
+            "Fork twenty subagents with write access and merge whichever finishes first.",
+            "Disable all hooks so planning is not blocked by policy checks."
           ],
-          "correctIndex": 3,
-          "explain": "plan mode - the task has large scale, architectural decisions, and multiple valid approaches \u00b7 buys safe exploration of the codebase and dependency understanding before committing \u00b7 prevents costly rework from late-discovered dependencies",
+          "correctIndex": 1,
+          "explain": "plan mode - the task has large scale, architectural decisions, and multiple valid approaches · buys safe exploration of the codebase and dependency understanding before committing · prevents costly rework from late-discovered dependencies",
           "source": "TS 3.4 K1 S1",
           "difficulty": "application"
         },
@@ -892,13 +917,13 @@
           "id": "D3.T4.S1.Q2",
           "prompt": "Adding a single date-validation conditional to one function - which mode, and what would the other mode cost you here?",
           "options": [
-            "Monolithic 2k-line CLAUDE.md",
-            "Verbose skill in main context",
-            "direct execution - simple, well-scoped, one file, clear change \u00b7 plan mode here adds ceremony and latency with nothing to de-risk \u00b7 scoping clarity, not file count alone, is the criterion",
-            "Team standards only in user CLAUDE.md"
+            "Always plan mode first, even for one-line conditionals, to document intent.",
+            "direct execution - simple, well-scoped, one file, clear change · plan mode here adds ceremony and latency with nothing to de-risk · scoping clarity, not file count alone, is the criterion",
+            "Spawn a research subagent before any one-function edit.",
+            "Use multi-agent debate mode for every conditional to reduce bugs."
           ],
-          "correctIndex": 2,
-          "explain": "direct execution - simple, well-scoped, one file, clear change \u00b7 plan mode here adds ceremony and latency with nothing to de-risk \u00b7 scoping clarity, not file count alone, is the criterion",
+          "correctIndex": 1,
+          "explain": "direct execution - simple, well-scoped, one file, clear change · plan mode here adds ceremony and latency with nothing to de-risk · scoping clarity, not file count alone, is the criterion",
           "source": "TS 3.4 K2 S2",
           "difficulty": "application"
         }
@@ -1008,7 +1033,7 @@
         }
       ],
       "one_liner": "Vague be conservative does not cut false positives. Explicit categories do. tool_use with a schema kills bad JSON. Independent review beats self-review because the generator keeps its own justifications.",
-      "open": "Linda's review bot flooded the team with style nits. Devs muted every category \u2014 including the security ones that worked. Trust is global. Noise in one place taxes everything.",
+      "open": "Linda's review bot flooded the team with style nits. Devs muted every category — including the security ones that worked. Trust is global. Noise in one place taxes everything.",
       "teach": [
         {
           "h": "Explicit criteria, not confidence dials",
@@ -1025,6 +1050,14 @@
         {
           "h": "Batch API and review architecture",
           "b": "Batch is 50 percent cheaper, up to about 24 hours, no latency SLA, no multi-turn tool loops. Keep pre-merge checks synchronous. Review in independent instances; large PRs get per-file passes plus a cross-file integration pass."
+        },
+        {
+          "h": "Criteria over vibes",
+          "b": "Claude 4 prompt guidance: replace 'be careful / high confidence' with operational categories and few-shot boundary examples. Structured outputs (JSON schema / forced tool) make format failures machine-checkable."
+        },
+        {
+          "h": "Schema mirrors reality",
+          "b": "Required fields that are often absent force hallucination. Optional/nullable fields + validation retries for format errors only. Missing source data needs a different remedy — fetch, null, or human — not more retries."
         }
       ],
       "anti": [
@@ -1047,7 +1080,7 @@
       ],
       "loop_steps": [
         "Write decidable criteria + severity examples",
-        "Add 2\u20134 few-shot on ambiguous cases",
+        "Add 2–4 few-shot on ambiguous cases",
         "Force schema via tool_use + tool_choice",
         "Validate + retry with error feedback",
         "Review in independent multi-pass architecture"
@@ -1075,13 +1108,13 @@
           "id": "D4.T1.S1.Q1",
           "prompt": "You added 'be conservative and only report high-confidence findings' and the false positive rate did not move - why do such instructions fail, and what class of instruction works?",
           "options": [
-            "Required fields for optional source data",
-            "confidence-based filtering gives the model no operational definition of what to skip \u00b7 specific categorical criteria work: report bugs and security issues, skip minor style and local patterns \u00b7 the model needs category boundaries, not a dial for a confidence it cannot calibrate",
-            "be conservative / high-confidence only",
-            "Batch for blocking pre-merge checks"
+            "confidence-based filtering gives the model no operational definition of what to skip · specific categorical criteria work: report bugs and security issues, skip minor style and local patterns · the model needs category boundaries, not a dial for a confidence it cannot calibrate",
+            "Raise the word 'conservative' to all-caps in the system prompt so the model prioritizes it.",
+            "Ask the model to output a 0-100 confidence score and filter client-side only.",
+            "Remove all examples so the model relies on its latent judgment of severity."
           ],
-          "correctIndex": 1,
-          "explain": "confidence-based filtering gives the model no operational definition of what to skip \u00b7 specific categorical criteria work: report bugs and security issues, skip minor style and local patterns \u00b7 the model needs category boundaries, not a dial for a confidence it cannot calibrate",
+          "correctIndex": 0,
+          "explain": "confidence-based filtering gives the model no operational definition of what to skip · specific categorical criteria work: report bugs and security issues, skip minor style and local patterns · the model needs category boundaries, not a dial for a confidence it cannot calibrate",
           "source": "TS 4.1 K2 S1",
           "difficulty": "analysis"
         },
@@ -1089,13 +1122,13 @@
           "id": "D4.T1.S2.Q1",
           "prompt": "One review category produces mostly noise and developers have started dismissing everything - what is the immediate move and what is its exit condition?",
           "options": [
-            "be conservative / high-confidence only",
-            "Batch for blocking pre-merge checks",
-            "temporarily disable the high false-positive categories \u00b7 keep accurate categories running so trust can rebuild on real signal \u00b7 re-enable a category once its improved prompt demonstrates acceptable precision",
-            "Required fields for optional source data"
+            "Double the volume of findings so signal appears by law of large numbers.",
+            "temporarily disable the high false-positive categories · keep accurate categories running so trust can rebuild on real signal · re-enable a category once its improved prompt demonstrates acceptable precision",
+            "Silence the entire review bot until a full rewrite ships next quarter.",
+            "Show only confidence scores without categories so developers re-triage manually."
           ],
-          "correctIndex": 2,
-          "explain": "temporarily disable the high false-positive categories \u00b7 keep accurate categories running so trust can rebuild on real signal \u00b7 re-enable a category once its improved prompt demonstrates acceptable precision",
+          "correctIndex": 1,
+          "explain": "temporarily disable the high false-positive categories · keep accurate categories running so trust can rebuild on real signal · re-enable a category once its improved prompt demonstrates acceptable precision",
           "source": "TS 4.1 K3 S2",
           "difficulty": "application"
         },
@@ -1103,13 +1136,13 @@
           "id": "D4.T2.S1.Q1",
           "prompt": "Detailed instructions still yield inconsistently formatted, hit-or-miss output - what technique do you reach for, with how many examples, targeted at what?",
           "options": [
-            "Batch for blocking pre-merge checks",
-            "Required fields for optional source data",
-            "be conservative / high-confidence only",
-            "add few-shot examples - the most effective technique for consistent, actionable output \u00b7 2-4 targeted examples, not a large pile \u00b7 target the ambiguous scenarios where behavior actually diverges"
+            "Add 50+ untargeted examples covering every edge case in one prompt.",
+            "Switch to a larger model without changing the prompt structure.",
+            "add few-shot examples - the most effective technique for consistent, actionable output · 2-4 targeted examples, not a large pile · target the ambiguous scenarios where behavior actually diverges",
+            "Remove structure and rely on free-form prose for maximum flexibility."
           ],
-          "correctIndex": 3,
-          "explain": "add few-shot examples - the most effective technique for consistent, actionable output \u00b7 2-4 targeted examples, not a large pile \u00b7 target the ambiguous scenarios where behavior actually diverges",
+          "correctIndex": 2,
+          "explain": "add few-shot examples - the most effective technique for consistent, actionable output · 2-4 targeted examples, not a large pile · target the ambiguous scenarios where behavior actually diverges",
           "source": "TS 4.2 K1 S1",
           "difficulty": "application"
         },
@@ -1117,13 +1150,13 @@
           "id": "D4.T2.S2.Q2",
           "prompt": "Extraction returns empty/null for required fields that ARE present in oddly formatted documents - what is the few-shot fix and why does it also reduce hallucination?",
           "options": [
-            "be conservative / high-confidence only",
-            "Batch for blocking pre-merge checks",
-            "add examples showing correct extraction from documents with varied formats (informal measurements, unusual layouts) \u00b7 the model learns to recognize the information despite surface variation \u00b7 demonstrated grounded extraction reduces both misses and fabricated values",
-            "Required fields for optional source data"
+            "Mark every field required so the model invents values rather than returning null.",
+            "add examples showing correct extraction from documents with varied formats (informal measurements, unusual layouts) · the model learns to recognize the information despite surface variation · demonstrated grounded extraction reduces both misses and fabricated values",
+            "Lower max_tokens so incomplete JSON fails closed as empty objects.",
+            "Strip few-shots and add only 'do not hallucinate' to the system prompt."
           ],
-          "correctIndex": 2,
-          "explain": "add examples showing correct extraction from documents with varied formats (informal measurements, unusual layouts) \u00b7 the model learns to recognize the information despite surface variation \u00b7 demonstrated grounded extraction reduces both misses and fabricated values",
+          "correctIndex": 1,
+          "explain": "add examples showing correct extraction from documents with varied formats (informal measurements, unusual layouts) · the model learns to recognize the information despite surface variation · demonstrated grounded extraction reduces both misses and fabricated values",
           "source": "TS 4.2 K4 S5",
           "difficulty": "application"
         },
@@ -1131,13 +1164,13 @@
           "id": "D4.T3.S1.Q2",
           "prompt": "What precisely may and must the model do under tool_choice auto, any, and forced - and in which one situation is each the right setting?",
           "options": [
-            "Batch for blocking pre-merge checks",
-            "be conservative / high-confidence only",
-            "auto: may call a tool or answer in text - right for genuinely optional tool use \u00b7 any: must call some tool, model picks which - right when structure is mandatory but the schema choice is the model's \u00b7 forced {type:'tool',name:...}: must call that tool - right when one specific extraction must run",
-            "Required fields for optional source data"
+            "auto: may call a tool or answer in text - right for genuinely optional tool use · any: must call some tool, model picks which - right when structure is mandatory but the schema choice is the model's · forced {type:'tool',name:...}: must call that tool - right when one specific extraction must run",
+            "forced means the model may ignore tools if text is clearer; auto means parallel tools only.",
+            "any and forced are synonyms; only auto is distinct.",
+            "tool_choice applies only to MCP servers, not API tool definitions."
           ],
-          "correctIndex": 2,
-          "explain": "auto: may call a tool or answer in text - right for genuinely optional tool use \u00b7 any: must call some tool, model picks which - right when structure is mandatory but the schema choice is the model's \u00b7 forced {type:'tool',name:...}: must call that tool - right when one specific extraction must run",
+          "correctIndex": 0,
+          "explain": "auto: may call a tool or answer in text - right for genuinely optional tool use · any: must call some tool, model picks which - right when structure is mandatory but the schema choice is the model's · forced {type:'tool',name:...}: must call that tool - right when one specific extraction must run",
           "source": "TS 4.3 K2",
           "difficulty": "recall"
         },
@@ -1145,13 +1178,13 @@
           "id": "D4.T3.S2.Q1",
           "prompt": "The model keeps inventing plausible values for fields the source document simply lacks - which schema decision causes this and what is the fix?",
           "options": [
-            "cause: the fields are marked required, forcing a value to satisfy the schema \u00b7 fix: make such fields optional/nullable so absence is representable \u00b7 rule: schema optionality must mirror real-world availability of the information",
-            "be conservative / high-confidence only",
-            "Required fields for optional source data",
-            "Batch for blocking pre-merge checks"
+            "Optional fields cause hallucinations; mark everything required to force honesty.",
+            "cause: the fields are marked required, forcing a value to satisfy the schema · fix: make such fields optional/nullable so absence is representable · rule: schema optionality must mirror real-world availability of the information",
+            "Increase temperature so the model explores null more often under required schemas.",
+            "Remove JSON schema entirely and parse free text with regex instead."
           ],
-          "correctIndex": 0,
-          "explain": "cause: the fields are marked required, forcing a value to satisfy the schema \u00b7 fix: make such fields optional/nullable so absence is representable \u00b7 rule: schema optionality must mirror real-world availability of the information",
+          "correctIndex": 1,
+          "explain": "cause: the fields are marked required, forcing a value to satisfy the schema · fix: make such fields optional/nullable so absence is representable · rule: schema optionality must mirror real-world availability of the information",
           "source": "TS 4.3 K4 S4",
           "difficulty": "analysis"
         },
@@ -1159,13 +1192,13 @@
           "id": "D4.T4.S1.Q2",
           "prompt": "Which validation failures will retries never fix no matter how good the feedback, and what signal tells you to stop retrying?",
           "options": [
-            "Required fields for optional source data",
-            "failures where the required information is simply absent from the provided source (e.g. exists only in an external document) \u00b7 signal: the error is about missing information, not about format or structure \u00b7 correct response: route to a different remedy (get the source, mark null, human review) instead of burning retries",
-            "Batch for blocking pre-merge checks",
-            "be conservative / high-confidence only"
+            "Always retry five times with the same prompt; missing sources eventually appear.",
+            "failures where the required information is simply absent from the provided source (e.g. exists only in an external document) · signal: the error is about missing information, not about format or structure · correct response: route to a different remedy (get the source, mark null, human review) instead of burning retries",
+            "Format errors never succeed on retry, so abandon all validation feedback loops.",
+            "If the model returns invalid JSON once, switch models rather than adjust schema or sources."
           ],
           "correctIndex": 1,
-          "explain": "failures where the required information is simply absent from the provided source (e.g. exists only in an external document) \u00b7 signal: the error is about missing information, not about format or structure \u00b7 correct response: route to a different remedy (get the source, mark null, human review) instead of burning retries",
+          "explain": "failures where the required information is simply absent from the provided source (e.g. exists only in an external document) · signal: the error is about missing information, not about format or structure · correct response: route to a different remedy (get the source, mark null, human review) instead of burning retries",
           "source": "TS 4.4 K2 S2",
           "difficulty": "analysis"
         },
@@ -1173,13 +1206,13 @@
           "id": "D4.T4.S2.Q1",
           "prompt": "Developers dismiss many review findings and you want to fix the prompt systematically rather than anecdotally - what field do you add to each finding and what analysis does it unlock?",
           "options": [
-            "add a detected_pattern field recording which code construct triggered the finding \u00b7 dismissals can then be aggregated by pattern to reveal systematic false-positive sources \u00b7 prompt fixes target measured patterns instead of vibes",
-            "Batch for blocking pre-merge checks",
-            "Required fields for optional source data",
-            "be conservative / high-confidence only"
+            "Add a free-text rant field for developer feelings about each finding.",
+            "add a detected_pattern field recording which code construct triggered the finding · dismissals can then be aggregated by pattern to reveal systematic false-positive sources · prompt fixes target measured patterns instead of vibes",
+            "Drop structured fields and email a weekly digest of raw model dumps.",
+            "Only track thumbs-up counts without linking them to code constructs."
           ],
-          "correctIndex": 0,
-          "explain": "add a detected_pattern field recording which code construct triggered the finding \u00b7 dismissals can then be aggregated by pattern to reveal systematic false-positive sources \u00b7 prompt fixes target measured patterns instead of vibes",
+          "correctIndex": 1,
+          "explain": "add a detected_pattern field recording which code construct triggered the finding · dismissals can then be aggregated by pattern to reveal systematic false-positive sources · prompt fixes target measured patterns instead of vibes",
           "source": "TS 4.4 K3 S3",
           "difficulty": "application"
         }
@@ -1290,16 +1323,16 @@
             "Structuring reports with explicit sections distinguishing well-established findings from contested ones, preserving original source characterizations and methodological context",
             "Completing document analysis with conflicting values included and explicitly annotated, letting the coordinator decide how to reconcile before passing to synthesis",
             "Requiring subagents to include publication or data collection dates in structured outputs to enable correct temporal interpretation",
-            "Rendering different content types appropriately in synthesis outputs \u2014 financial data as tables, news as prose, technical findings as structured lists \u2014 rather than converting everything to a uniform format"
+            "Rendering different content types appropriately in synthesis outputs — financial data as tables, news as prose, technical findings as structured lists — rather than converting everything to a uniform format"
           ]
         }
       ],
-      "one_liner": "Exact numbers die in vague summaries. Keep transactional facts in a case-facts block. Escalate on explicit request, policy gaps, and no progress \u2014 not on sentiment.",
+      "one_liner": "Exact numbers die in vague summaries. Keep transactional facts in a case-facts block. Escalate on explicit request, policy gaps, and no progress — not on sentiment.",
       "open": "A forty-turn refund chat misquotes the amount after progressive summarization. The agent is not being careless. The facts fell out of the summary. Put them on a shelf the summary cannot throw away.",
       "teach": [
         {
           "h": "Preserve critical facts",
-          "b": "Extract amounts, dates, order IDs, statuses into a persistent case-facts block outside summarized history. Still pass full history for coherence. Trim tool outputs at ingestion \u2014 not after the window is already full."
+          "b": "Extract amounts, dates, order IDs, statuses into a persistent case-facts block outside summarized history. Still pass full history for coherence. Trim tool outputs at ingestion — not after the window is already full."
         },
         {
           "h": "Lost-in-the-middle",
@@ -1307,11 +1340,19 @@
         },
         {
           "h": "Escalation policy",
-          "b": "Legitimate triggers: customer asks for a human, policy exception/gap, inability to progress. Explicit demand escalates immediately. Frustration on a solvable issue: acknowledge and offer to resolve; escalate if they reiterate. Multiple identity matches \u2192 ask for more identifiers, never pick heuristically."
+          "b": "Legitimate triggers: customer asks for a human, policy exception/gap, inability to progress. Explicit demand escalates immediately. Frustration on a solvable issue: acknowledge and offer to resolve; escalate if they reiterate. Multiple identity matches → ask for more identifiers, never pick heuristically."
         },
         {
           "h": "Error propagation and provenance",
           "b": "Propagate failure type, attempted query, partials, alternatives. No silent empty-as-success. Keep claim-source mappings through synthesis. Annotate conflicts; do not pick one number arbitrarily."
+        },
+        {
+          "h": "Protect the facts that compress poorly",
+          "b": "Long sessions and progressive summarization destroy exact amounts, dates, and IDs. Keep a structured case-facts block outside summarized history. Watch lost-in-the-middle on aggregated inputs."
+        },
+        {
+          "h": "Reliability is protocol, not hope",
+          "b": "Escalation needs explicit criteria and examples. Identity ambiguity requires clarification, not heuristics. Subagent failures return typed payloads. Local retry for transient errors; propagate only unresolvables with partial results."
         }
       ],
       "anti": [
@@ -1362,13 +1403,13 @@
           "id": "D5.T1.S1.Q1",
           "prompt": "After progressive summarization, the agent misquotes the refund amount and promised dates - what got lost, and what structure prevents it?",
           "options": [
-            "summaries condensed exact numbers, dates, and customer-stated expectations into vague prose \u00b7 extract transactional facts (amounts, dates, order numbers, statuses) into a persistent case-facts block \u00b7 the block rides in every prompt outside the summarized history, immune to compression",
-            "Summarize away exact amounts",
-            "Escalate on sentiment / self-confidence",
-            "Heuristic pick among three customer matches"
+            "summaries condensed exact numbers, dates, and customer-stated expectations into vague prose · extract transactional facts (amounts, dates, order numbers, statuses) into a persistent case-facts block · the block rides in every prompt outside the summarized history, immune to compression",
+            "Summarize more aggressively so noise cannot corrupt later turns.",
+            "Rely on the model to remember amounts from early turns without structured extraction.",
+            "Store facts only in tool results and never re-inject them after compaction."
           ],
           "correctIndex": 0,
-          "explain": "summaries condensed exact numbers, dates, and customer-stated expectations into vague prose \u00b7 extract transactional facts (amounts, dates, order numbers, statuses) into a persistent case-facts block \u00b7 the block rides in every prompt outside the summarized history, immune to compression",
+          "explain": "summaries condensed exact numbers, dates, and customer-stated expectations into vague prose · extract transactional facts (amounts, dates, order numbers, statuses) into a persistent case-facts block · the block rides in every prompt outside the summarized history, immune to compression",
           "source": "TS 5.1 K1 S1",
           "difficulty": "analysis"
         },
@@ -1376,13 +1417,13 @@
           "id": "D5.T1.S2.Q2",
           "prompt": "Findings from the middle of a long aggregated input keep getting omitted - what is the effect called, what are the two structural mitigations, and what must subagent outputs carry for synthesis to stay accurate?",
           "options": [
-            "Summarize away exact amounts",
-            "Heuristic pick among three customer matches",
-            "the lost-in-the-middle effect: beginning and end process reliably, middles get dropped \u00b7 mitigate: key-findings summary at the beginning, detailed results organized with explicit section headers \u00b7 subagent outputs must include metadata (dates, source locations, methodological context) so downstream synthesis stays accurate",
-            "Escalate on sentiment / self-confidence"
+            "the lost-in-the-middle effect: beginning and end process reliably, middles get dropped · mitigate: key-findings summary at the beginning, detailed results organized with explicit section headers · subagent outputs must include metadata (dates, source locations, methodological context) so downstream synthesis stays accurate",
+            "Random dropout from temperature; fix by setting temperature to zero only.",
+            "Token billing limits mid-string; buy a higher tier without restructuring inputs.",
+            "Models always prefer middle content; put critical facts only in the center."
           ],
-          "correctIndex": 2,
-          "explain": "the lost-in-the-middle effect: beginning and end process reliably, middles get dropped \u00b7 mitigate: key-findings summary at the beginning, detailed results organized with explicit section headers \u00b7 subagent outputs must include metadata (dates, source locations, methodological context) so downstream synthesis stays accurate",
+          "correctIndex": 0,
+          "explain": "the lost-in-the-middle effect: beginning and end process reliably, middles get dropped · mitigate: key-findings summary at the beginning, detailed results organized with explicit section headers · subagent outputs must include metadata (dates, source locations, methodological context) so downstream synthesis stays accurate",
           "source": "TS 5.1 K2 S4,S5",
           "difficulty": "analysis"
         },
@@ -1390,13 +1431,13 @@
           "id": "D5.T2.S1.Q1",
           "prompt": "First-contact resolution is far below target: the agent escalates straightforward damage claims yet attempts policy-exception cases alone - what fix addresses the root cause, and why do confidence thresholds, trained classifiers, and sentiment routing all miss it?",
           "options": [
-            "Summarize away exact amounts",
-            "Escalate on sentiment / self-confidence",
-            "root cause: unclear decision boundaries - add explicit escalation criteria with few-shot escalate-vs-resolve examples to the system prompt \u00b7 self-reported confidence is poorly calibrated (the agent is already wrongly confident); classifiers are over-engineering before prompt optimization is tried \u00b7 sentiment tracks emotion, not case complexity - a different variable entirely",
-            "Heuristic pick among three customer matches"
+            "Add a hard confidence threshold of 0.9 and escalate whenever self-score is lower.",
+            "Train a sentiment classifier so angry customers always escalate first.",
+            "root cause: unclear decision boundaries - add explicit escalation criteria with few-shot escalate-vs-resolve examples to the system prompt · self-reported confidence is poorly calibrated (the agent is already wrongly confident); classifiers are over-engineering before prompt optimization is tried · sentiment tracks emotion, not case complexity - a different variable entirely",
+            "Remove escalation entirely so first-contact resolution rises by definition."
           ],
           "correctIndex": 2,
-          "explain": "root cause: unclear decision boundaries - add explicit escalation criteria with few-shot escalate-vs-resolve examples to the system prompt \u00b7 self-reported confidence is poorly calibrated (the agent is already wrongly confident); classifiers are over-engineering before prompt optimization is tried \u00b7 sentiment tracks emotion, not case complexity - a different variable entirely",
+          "explain": "root cause: unclear decision boundaries - add explicit escalation criteria with few-shot escalate-vs-resolve examples to the system prompt · self-reported confidence is poorly calibrated (the agent is already wrongly confident); classifiers are over-engineering before prompt optimization is tried · sentiment tracks emotion, not case complexity - a different variable entirely",
           "source": "TS 5.2 K3 S1",
           "difficulty": "analysis"
         },
@@ -1404,13 +1445,13 @@
           "id": "D5.T2.S2.Q2",
           "prompt": "get_customer returns three plausible matches - what must the agent do, and why is picking the best-looking match an anti-pattern?",
           "options": [
-            "Summarize away exact amounts",
-            "Escalate on sentiment / self-confidence",
-            "Heuristic pick among three customer matches",
-            "ask the customer for additional identifiers to disambiguate \u00b7 heuristic selection risks acting on the wrong account - misdirected refunds and privacy exposure \u00b7 clarification is the required response to identity ambiguity"
+            "Pick the highest-scoring fuzzy match and proceed with the refund.",
+            "ask the customer for additional identifiers to disambiguate · heuristic selection risks acting on the wrong account - misdirected refunds and privacy exposure · clarification is the required response to identity ambiguity",
+            "Average the three customer records into a synthetic identity.",
+            "Escalate to a human without asking for clarifying identifiers first when chat is still open."
           ],
-          "correctIndex": 3,
-          "explain": "ask the customer for additional identifiers to disambiguate \u00b7 heuristic selection risks acting on the wrong account - misdirected refunds and privacy exposure \u00b7 clarification is the required response to identity ambiguity",
+          "correctIndex": 1,
+          "explain": "ask the customer for additional identifiers to disambiguate · heuristic selection risks acting on the wrong account - misdirected refunds and privacy exposure · clarification is the required response to identity ambiguity",
           "source": "TS 5.2 K4 S5",
           "difficulty": "application"
         },
@@ -1418,13 +1459,13 @@
           "id": "D5.T3.S1.Q1",
           "prompt": "A web-search subagent times out mid-research - what exactly should it return to the coordinator, and what recovery option does each element unlock?",
           "options": [
-            "Summarize away exact amounts",
-            "failure type (what happened) -> retry-vs-abandon; attempted query -> retry with modification \u00b7 partial results -> proceed with what exists; potential alternatives -> redirect strategy \u00b7 the payload is designed backward from the coordinator's decision space",
-            "Escalate on sentiment / self-confidence",
-            "Heuristic pick among three customer matches"
+            "Return only 'error' with no payload so the coordinator stays uncluttered.",
+            "failure type (what happened) -> retry-vs-abandon; attempted query -> retry with modification · partial results -> proceed with what exists; potential alternatives -> redirect strategy · the payload is designed backward from the coordinator's decision space",
+            "Swallow the timeout and return empty success so the pipeline continues silently.",
+            "Crash the entire multi-agent run on any subagent timeout."
           ],
           "correctIndex": 1,
-          "explain": "failure type (what happened) -> retry-vs-abandon; attempted query -> retry with modification \u00b7 partial results -> proceed with what exists; potential alternatives -> redirect strategy \u00b7 the payload is designed backward from the coordinator's decision space",
+          "explain": "failure type (what happened) -> retry-vs-abandon; attempted query -> retry with modification · partial results -> proceed with what exists; potential alternatives -> redirect strategy · the payload is designed backward from the coordinator's decision space",
           "source": "TS 5.3 K1 S1",
           "difficulty": "application"
         },
@@ -1432,13 +1473,13 @@
           "id": "D5.T3.S2.Q1",
           "prompt": "What are the two opposite error-propagation anti-patterns, and what is the disciplined middle path between them, including who retries what?",
           "options": [
-            "anti-pattern 1: returning empty results marked successful - suppression prevents any recovery and corrupts outputs \u00b7 anti-pattern 2: propagating the exception to kill the entire workflow when recovery could succeed \u00b7 middle: local recovery for transient failures; propagate only unresolvables, with what was attempted and partial results",
-            "Escalate on sentiment / self-confidence",
-            "Summarize away exact amounts",
-            "Heuristic pick among three customer matches"
+            "Always kill the workflow on any tool error so operators notice immediately.",
+            "Always return empty success so dashboards stay green.",
+            "anti-pattern 1: returning empty results marked successful - suppression prevents any recovery and corrupts outputs · anti-pattern 2: propagating the exception to kill the entire workflow when recovery could succeed · middle: local recovery for transient failures; propagate only unresolvables, with what was attempted and partial results",
+            "Retry forever inside the leaf agent with no coordinator visibility."
           ],
-          "correctIndex": 0,
-          "explain": "anti-pattern 1: returning empty results marked successful - suppression prevents any recovery and corrupts outputs \u00b7 anti-pattern 2: propagating the exception to kill the entire workflow when recovery could succeed \u00b7 middle: local recovery for transient failures; propagate only unresolvables, with what was attempted and partial results",
+          "correctIndex": 2,
+          "explain": "anti-pattern 1: returning empty results marked successful - suppression prevents any recovery and corrupts outputs · anti-pattern 2: propagating the exception to kill the entire workflow when recovery could succeed · middle: local recovery for transient failures; propagate only unresolvables, with what was attempted and partial results",
           "source": "TS 5.3 K4 S3",
           "difficulty": "analysis"
         },
@@ -1446,13 +1487,13 @@
           "id": "D5.T4.S1.Q1",
           "prompt": "An hour into exploration, the agent starts describing 'typical repository patterns' instead of the specific classes it actually found earlier - what is happening and what two immediate mechanisms respond?",
           "options": [
-            "Summarize away exact amounts",
-            "context degradation: the specifics have effectively fallen out of usable context \u00b7 reference the scratchpad of recorded findings to re-ground answers \u00b7 /compact to reduce context consumed by verbose discovery output",
-            "Heuristic pick among three customer matches",
-            "Escalate on sentiment / self-confidence"
+            "The model is overfitted to the repo; retrain with more examples of this codebase.",
+            "context degradation: the specifics have effectively fallen out of usable context · reference the scratchpad of recorded findings to re-ground answers · /compact to reduce context consumed by verbose discovery output",
+            "Disable all tools so the agent answers from parametric knowledge only.",
+            "Increase max_tokens without managing what remains in the window."
           ],
           "correctIndex": 1,
-          "explain": "context degradation: the specifics have effectively fallen out of usable context \u00b7 reference the scratchpad of recorded findings to re-ground answers \u00b7 /compact to reduce context consumed by verbose discovery output",
+          "explain": "context degradation: the specifics have effectively fallen out of usable context · reference the scratchpad of recorded findings to re-ground answers · /compact to reduce context consumed by verbose discovery output",
           "source": "TS 5.4 K1 S5",
           "difficulty": "analysis"
         },
@@ -1460,13 +1501,13 @@
           "id": "D5.T4.S2.Q2",
           "prompt": "Design crash recovery for a long multi-agent exploration - what does each agent export, what does the coordinator load on resume, and where does recovered state go?",
           "options": [
-            "Heuristic pick among three customer matches",
-            "Summarize away exact amounts",
-            "Escalate on sentiment / self-confidence",
-            "each agent exports structured state to a known location as it works \u00b7 on resume the coordinator loads a manifest of that state \u00b7 recovered state is injected into agent prompts so work resumes rather than restarts"
+            "Rely on the chat UI history alone; agents never need exported state files.",
+            "each agent exports structured state to a known location as it works · on resume the coordinator loads a manifest of that state · recovered state is injected into agent prompts so work resumes rather than restarts",
+            "Restart every agent from zero after any crash to guarantee purity.",
+            "Store only screenshots of the terminal; OCR them on resume."
           ],
-          "correctIndex": 3,
-          "explain": "each agent exports structured state to a known location as it works \u00b7 on resume the coordinator loads a manifest of that state \u00b7 recovered state is injected into agent prompts so work resumes rather than restarts",
+          "correctIndex": 1,
+          "explain": "each agent exports structured state to a known location as it works · on resume the coordinator loads a manifest of that state · recovered state is injected into agent prompts so work resumes rather than restarts",
           "source": "TS 5.4 K4 S4",
           "difficulty": "application"
         }
