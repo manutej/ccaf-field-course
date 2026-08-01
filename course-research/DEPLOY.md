@@ -4,7 +4,7 @@
 Full TanStack Start course is live in the Grok preview:
 - Home, Modules, per-domain lessons, Concept map, Mixed drill
 - Progress persisted in localStorage
-- Production `npm run build` green (Nitro / Vercel output)
+- Production `npm run build` green
 
 ## Public URLs
 | Surface | URL |
@@ -15,13 +15,12 @@ Full TanStack Start course is live in the Grok preview:
 
 Vercel may require team SSO; GitHub Pages is fully public.
 
-## Pipeline (Noether course)
-0. Commission — curriculum contract from CCAF registry + tree  
-1. Research swarm — parallel official-doc packs D1–D2 and D3–D5  
-2. Design system — paper/ink/teal tokens, teaching patterns  
-3. Lessons — 5 domains, Manu voice, anti-patterns, 8 drills each  
-4. Assembly — shell, progress, concept map, mixed drill  
-5. Delivery — preview + GitHub + Vercel  
+## What to try
+1. Start Domain 1 (27%) — agentic loop + stop_reason
+2. Expand task statements under each domain
+3. Take the 8-item domain drill (full multi-choice distractors)
+4. Run mixed drill across domains
+5. Walk the concept map for prereq order
 
 ## Integrity
-Public exam-guide objectives only. Official Anthropic docs. Fallibility stamps. No item bank.
+Public exam-guide objectives only. Official Anthropic docs. No item bank.
