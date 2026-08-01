@@ -1,0 +1,12 @@
+node_modules
+.vercel
+.output
+dist
+tmp
+/tmp
+screenshots
+ccaf-source
+*.log
+.DS_Store
+course-research/vercel-tool-args.json
+course-research/vercel-deploy-args.json
