@@ -14,8 +14,9 @@ export const Route = createFileRoute("/modules/$moduleId")({
 
 function ModuleLesson() {
   const { moduleId } = Route.useParams();
-  const mod = getModule(moduleId);
-  if (!mod) throw notFound();
+  const found = getModule(moduleId);
+  if (!found) throw notFound();
+  const mod = found;
 
   const idx = course.modules.findIndex((m) => m.id === mod.id);
   const prev = course.modules[idx - 1];
