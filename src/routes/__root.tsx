@@ -6,7 +6,7 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { Shell } from "@/components/course/Shell";
-import appCss from "@/styles.css?url";
+import appCss from "../styles.css?url";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -19,7 +19,7 @@ export const Route = createRootRoute({
       {
         name: "description",
         content:
-          "Interactive field course for Claude Certified Architect – Foundations. Five domains, high-yield drills, official-doc provenance.",
+          "CCAR-F exam prep: operadic question tree, randomized 4-of-6 scenario exams, adversarial item bank grounded in the public exam guide.",
       },
     ],
     links: [
@@ -38,7 +38,7 @@ export const Route = createRootRoute({
           Page not found
         </h1>
         <p className="mt-2 text-[var(--color-ink-soft)]">
-          That path is not part of the field course. Head back to modules.
+          That path is not part of the field course. Head back to modules or the scenario exam.
         </p>
       </div>
     </Shell>

@@ -1,7 +1,5 @@
 {
-  "name": "ccaf-field-course",
+  "name": "ccaf-static",
   "private": true,
-  "scripts": {
-    "build": "mkdir -p dist && cp index.html dist/index.html"
-  }
+  "version": "1.0.0"
 }

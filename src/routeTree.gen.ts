@@ -10,14 +10,26 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BankRouteImport } from './routes/bank'
 import { Route as DrillRouteImport } from './routes/drill'
+import { Route as ExamRouteImport } from './routes/exam'
 import { Route as MapRouteImport } from './routes/map'
+import { Route as TreeRouteImport } from './routes/tree'
 import { Route as ModulesIndexRouteImport } from './routes/modules/index'
 import { Route as ModulesModuleIdRouteImport } from './routes/modules/$moduleId'
+import { Route as V2IndexRouteImport } from './routes/v2/index'
+import { Route as V2BankRouteImport } from './routes/v2/bank'
+import { Route as V2ExamRouteImport } from './routes/v2/exam'
+import { Route as V2TreeRouteImport } from './routes/v2/tree'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BankRoute = BankRouteImport.update({
+  id: '/bank',
+  path: '/bank',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DrillRoute = DrillRouteImport.update({
@@ -25,9 +37,19 @@ const DrillRoute = DrillRouteImport.update({
   path: '/drill',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ExamRoute = ExamRouteImport.update({
+  id: '/exam',
+  path: '/exam',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MapRoute = MapRouteImport.update({
   id: '/map',
   path: '/map',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TreeRoute = TreeRouteImport.update({
+  id: '/tree',
+  path: '/tree',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ModulesIndexRoute = ModulesIndexRouteImport.update({
@@ -40,43 +62,128 @@ const ModulesModuleIdRoute = ModulesModuleIdRouteImport.update({
   path: '/modules/$moduleId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const V2IndexRoute = V2IndexRouteImport.update({
+  id: '/v2/',
+  path: '/v2/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const V2BankRoute = V2BankRouteImport.update({
+  id: '/v2/bank',
+  path: '/v2/bank',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const V2ExamRoute = V2ExamRouteImport.update({
+  id: '/v2/exam',
+  path: '/v2/exam',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const V2TreeRoute = V2TreeRouteImport.update({
+  id: '/v2/tree',
+  path: '/v2/tree',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/bank': typeof BankRoute
   '/drill': typeof DrillRoute
+  '/exam': typeof ExamRoute
   '/map': typeof MapRoute
+  '/tree': typeof TreeRoute
   '/modules/$moduleId': typeof ModulesModuleIdRoute
+  '/v2/bank': typeof V2BankRoute
+  '/v2/exam': typeof V2ExamRoute
+  '/v2/tree': typeof V2TreeRoute
   '/modules/': typeof ModulesIndexRoute
+  '/v2/': typeof V2IndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/bank': typeof BankRoute
   '/drill': typeof DrillRoute
+  '/exam': typeof ExamRoute
   '/map': typeof MapRoute
+  '/tree': typeof TreeRoute
   '/modules/$moduleId': typeof ModulesModuleIdRoute
+  '/v2/bank': typeof V2BankRoute
+  '/v2/exam': typeof V2ExamRoute
+  '/v2/tree': typeof V2TreeRoute
   '/modules': typeof ModulesIndexRoute
+  '/v2': typeof V2IndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/bank': typeof BankRoute
   '/drill': typeof DrillRoute
+  '/exam': typeof ExamRoute
   '/map': typeof MapRoute
+  '/tree': typeof TreeRoute
   '/modules/$moduleId': typeof ModulesModuleIdRoute
+  '/v2/bank': typeof V2BankRoute
+  '/v2/exam': typeof V2ExamRoute
+  '/v2/tree': typeof V2TreeRoute
   '/modules/': typeof ModulesIndexRoute
+  '/v2/': typeof V2IndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/drill' | '/map' | '/modules/$moduleId' | '/modules/'
+  fullPaths:
+    | '/'
+    | '/bank'
+    | '/drill'
+    | '/exam'
+    | '/map'
+    | '/tree'
+    | '/modules/$moduleId'
+    | '/v2/bank'
+    | '/v2/exam'
+    | '/v2/tree'
+    | '/modules/'
+    | '/v2/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/drill' | '/map' | '/modules/$moduleId' | '/modules'
-  id: '__root__' | '/' | '/drill' | '/map' | '/modules/$moduleId' | '/modules/'
+  to:
+    | '/'
+    | '/bank'
+    | '/drill'
+    | '/exam'
+    | '/map'
+    | '/tree'
+    | '/modules/$moduleId'
+    | '/v2/bank'
+    | '/v2/exam'
+    | '/v2/tree'
+    | '/modules'
+    | '/v2'
+  id:
+    | '__root__'
+    | '/'
+    | '/bank'
+    | '/drill'
+    | '/exam'
+    | '/map'
+    | '/tree'
+    | '/modules/$moduleId'
+    | '/v2/bank'
+    | '/v2/exam'
+    | '/v2/tree'
+    | '/modules/'
+    | '/v2/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BankRoute: typeof BankRoute
   DrillRoute: typeof DrillRoute
+  ExamRoute: typeof ExamRoute
   MapRoute: typeof MapRoute
+  TreeRoute: typeof TreeRoute
   ModulesModuleIdRoute: typeof ModulesModuleIdRoute
+  V2BankRoute: typeof V2BankRoute
+  V2ExamRoute: typeof V2ExamRoute
+  V2TreeRoute: typeof V2TreeRoute
   ModulesIndexRoute: typeof ModulesIndexRoute
+  V2IndexRoute: typeof V2IndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -88,6 +195,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/bank': {
+      id: '/bank'
+      path: '/bank'
+      fullPath: '/bank'
+      preLoaderRoute: typeof BankRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/drill': {
       id: '/drill'
       path: '/drill'
@@ -95,11 +209,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DrillRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/exam': {
+      id: '/exam'
+      path: '/exam'
+      fullPath: '/exam'
+      preLoaderRoute: typeof ExamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/map': {
       id: '/map'
       path: '/map'
       fullPath: '/map'
       preLoaderRoute: typeof MapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tree': {
+      id: '/tree'
+      path: '/tree'
+      fullPath: '/tree'
+      preLoaderRoute: typeof TreeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/modules/': {
@@ -116,15 +244,50 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ModulesModuleIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/v2/': {
+      id: '/v2/'
+      path: '/v2'
+      fullPath: '/v2/'
+      preLoaderRoute: typeof V2IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/v2/bank': {
+      id: '/v2/bank'
+      path: '/v2/bank'
+      fullPath: '/v2/bank'
+      preLoaderRoute: typeof V2BankRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/v2/exam': {
+      id: '/v2/exam'
+      path: '/v2/exam'
+      fullPath: '/v2/exam'
+      preLoaderRoute: typeof V2ExamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/v2/tree': {
+      id: '/v2/tree'
+      path: '/v2/tree'
+      fullPath: '/v2/tree'
+      preLoaderRoute: typeof V2TreeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BankRoute: BankRoute,
   DrillRoute: DrillRoute,
+  ExamRoute: ExamRoute,
   MapRoute: MapRoute,
+  TreeRoute: TreeRoute,
   ModulesModuleIdRoute: ModulesModuleIdRoute,
+  V2BankRoute: V2BankRoute,
+  V2ExamRoute: V2ExamRoute,
+  V2TreeRoute: V2TreeRoute,
   ModulesIndexRoute: ModulesIndexRoute,
+  V2IndexRoute: V2IndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
