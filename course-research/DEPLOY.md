@@ -1,26 +1,36 @@
 # CCAF Field Course — Deploy
 
-## Interactive app (this session)
-Full TanStack Start course is live in the Grok preview:
-- Home, Modules, per-domain lessons, Concept map, Mixed drill
-- Progress persisted in localStorage
-- Production `npm run build` green
+## Target custom domain
+**https://claude-architect.cetiai.co**
 
-## Public URLs
-| Surface | URL |
-|--------|-----|
-| **GitHub Pages (full static course)** | https://manutej.github.io/ccaf-field-course/ |
-| **Vercel** | https://ccaf-field-course-manu-mulaveesalas-projects.vercel.app |
-| **Source** | https://github.com/manutej/ccaf-field-course |
+This is a **subdomain of your real domain** `cetiai.co` — not a fake platform host.
 
-Vercel may require team SSO; GitHub Pages is fully public.
+## Live now
 
-## What to try
-1. Start Domain 1 (27%) — agentic loop + stop_reason
-2. Expand task statements under each domain
-3. Take the 8-item domain drill (full multi-choice distractors)
-4. Run mixed drill across domains
-5. Walk the concept map for prereq order
+| Surface | URL | Notes |
+|--------|-----|--------|
+| **GitHub Pages (course HTML)** | https://manutej.github.io/ccaf-field-course/ | Public, CNAME file set |
+| **Vercel (public, no SSO)** | https://claude-architect-cetiai.vercel.app | Landing + deploy project ready |
+| **Source** | https://github.com/manutej/ccaf-field-course | main + gh-pages |
+
+GitHub Pages already has `cname: claude-architect.cetiai.co` on the site settings (from the `CNAME` file on `gh-pages`).
+
+## DNS you must add (required for the custom host)
+
+In the DNS panel that owns **cetiai.co** (looks like Vercel for the apex):
+
+| Type | Name | Value |
+|------|------|--------|
+| **CNAME** | `claude-architect` | `manutej.github.io` |
+
+(If you prefer the Vercel project instead of GitHub Pages, use value `cname.vercel-dns.com` **and** add `claude-architect.cetiai.co` under the Vercel project **Domains** tab.)
+
+After DNS propagates (often 1–30 min):
+1. Open https://claude-architect.cetiai.co  
+2. In GitHub repo → Settings → Pages, enforce HTTPS if not already green.
+
+## Recommended path
+**GitHub Pages + CNAME → manutej.github.io** — already wired on the repo side.
 
 ## Integrity
-Public exam-guide objectives only. Official Anthropic docs. No item bank.
+Public exam-guide objectives only. Not affiliated with Anthropic.
